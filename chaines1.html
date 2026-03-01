@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cours Python - Les Chaînes de Caractères</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .code-editor {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+        .output-console {
+            background: #0d1117;
+            color: #58a6ff;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            min-height: 100px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function PythonStringCourse() {
+          const [activeSection, setActiveSection] = useState('intro');
+          const [selectedExercise, setSelectedExercise] = useState(null);
+          const [userCode, setUserCode] = useState('');
+          const [output, setOutput] = useState('');
+
+          const sections = [
+            { id: 'intro', title: 'Introduction', icon: '📚' },
+            { id: 'basics', title: 'Les bases', icon: '🔤' },
+            { id: 'methods', title: 'Méthodes', icon: '🛠️' },
+            { id: 'slicing', title: 'Découpage', icon: '✂️' },
+            { id: 'qcm', title: 'QCM', icon: '❓' },
+            { id: 'exercises', title: 'Exercices', icon: '💪' },
+          ];
+
+          const exercises = [
+            {
+              id: 1,
+              title: "Insérer des astérisques",
+              description: "Écrivez un programme qui recopie une chaîne en insérant des astérisques entre les caractères.",
+              example: "'gaston' → 'g*a*s*t*o*n'",
+              starter: "# Votre code ici\nchaine = 'gaston'\nresultat = ''\n\n# Complétez le code\n\nprint(resultat)",
+              solution: "chaine = 'gaston'\nresultat = '*'.join(chaine)\nprint(resultat)",
+              hint: "Utilisez la méthode join() avec '*' comme séparateur"
+            },
+            {
+              id: 2,
+              title: "Inverser une chaîne",
+              description: "Écrivez un programme qui inverse une chaîne de caractères.",
+              example: "'zorglub' → 'bulgroz'",
+              starter: "# Votre code ici\nchaine = 'zorglub'\nresultat = ''\n\n# Complétez le code\n\nprint(resultat)",
+              solution: "chaine = 'zorglub'\nresultat = chaine[::-1]\nprint(resultat)",
+              hint: "Utilisez le slicing avec [::-1]"
+            },
+            {
+              id: 3,
+              title: "Compter les occurrences",
+              description: "Écrivez un programme qui compte le nombre d'occurrences de chaque caractère dans une chaîne.",
+              example: "'hello' → {'h': 1, 'e': 1, 'l': 2, 'o': 1}",
+              starter: "# Votre code ici\nchaine = 'hello'\noccurrences = {}\n\n# Complétez le code\n\nprint(occurrences)",
+              solution: "chaine = 'hello'\noccurrences = {}\nfor char in chaine:\n    if char in occurrences:\n        occurrences[char] += 1\n    else:\n        occurrences[char] = 1\nprint(occurrences)",
+              hint: "Parcourez la chaîne et utilisez un dictionnaire"
+            },
+            {
+              id: 4,
+              title: "Vérifier palindrome",
+              description: "Écrivez un programme qui vérifie si une chaîne est un palindrome (se lit de la même façon dans les deux sens).",
+              example: "'radar' → True, 'python' → False",
+              starter: "# Votre code ici\nchaine = 'radar'\nest_palindrome = False\n\n# Complétez le code\n\nprint(est_palindrome)",
+              solution: "chaine = 'radar'\nest_palindrome = chaine == chaine[::-1]\nprint(est_palindrome)",
+              hint: "Comparez la chaîne avec son inverse"
+            },
+            {
+              id: 5,
+              title: "Chiffrement de César",
+              description: "Créez une fonction qui décale les lettres dans l'alphabet (chiffrement de César avec décalage).",
+              example: "'abc' avec décalage 3 → 'def'",
+              starter: "# Votre code ici\ndef cesar(texte, decalage):\n    resultat = ''\n    # Complétez le code\n    return resultat\n\nprint(cesar('abc', 3))",
+              solution: "def cesar(texte, decalage):\n    resultat = ''\n    for char in texte:\n        if char.isalpha():\n            base = ord('A') if char.isupper() else ord('a')\n            nouv_char = chr((ord(char) - base + decalage) % 26 + base)\n            resultat += nouv_char\n        else:\n            resultat += char\n    return resultat\n\nprint(cesar('abc', 3))",
+              hint: "Utilisez ord() et chr() pour manipuler les codes ASCII"
+            },
+            {
+              id: 6,
+              title: "Compter les voyelles",
+              description: "Écrivez un programme qui compte le nombre de voyelles dans une chaîne.",
+              example: "'Python' → 1 (le 'o')",
+              starter: "# Votre code ici\nchaine = 'Python'\nvoyelles = 'aeiouyAEIOUY'\ncompteur = 0\n\n# Complétez le code\n\nprint(compteur)",
+              solution: "chaine = 'Python'\nvoyelles = 'aeiouyAEIOUY'\ncompteur = 0\nfor char in chaine:\n    if char in voyelles:\n        compteur += 1\nprint(compteur)",
+              hint: "Parcourez la chaîne et testez si chaque caractère est dans la liste des voyelles"
+            },
+            {
+              id: 7,
+              title: "Supprimer les doublons",
+              description: "Écrivez un programme qui supprime les caractères en double consécutifs.",
+              example: "'booonjour' → 'bonjour'",
+              starter: "# Votre code ici\nchaine = 'booonjour'\nresultat = ''\n\n# Complétez le code\n\nprint(resultat)",
+              solution: "chaine = 'booonjour'\nresultat = ''\nfor i, char in enumerate(chaine):\n    if i == 0 or char != chaine[i-1]:\n        resultat += char\nprint(resultat)",
+              hint: "Comparez chaque caractère avec le précédent"
+            },
+            {
+              id: 8,
+              title: "Première lettre en majuscule",
+              description: "Écrivez un programme qui met la première lettre de chaque mot en majuscule.",
+              example: "'bonjour le monde' → 'Bonjour Le Monde'",
+              starter: "# Votre code ici\nchaine = 'bonjour le monde'\nresultat = ''\n\n# Complétez le code\n\nprint(resultat)",
+              solution: "chaine = 'bonjour le monde'\nresultat = chaine.title()\n# Ou manuellement:\n# mots = chaine.split()\n# resultat = ' '.join([mot.capitalize() for mot in mots])\nprint(resultat)",
+              hint: "Utilisez la méthode title() ou split() puis capitalize()"
+            },
+            {
+              id: 9,
+              title: "Remplacer les espaces",
+              description: "Écrivez un programme qui remplace tous les espaces par des underscores.",
+              example: "'Hello World' → 'Hello_World'",
+              starter: "# Votre code ici\nchaine = 'Hello World'\nresultat = ''\n\n# Complétez le code\n\nprint(resultat)",
+              solution: "chaine = 'Hello World'\nresultat = chaine.replace(' ', '_')\nprint(resultat)",
+              hint: "Utilisez la méthode replace()"
+            },
+            {
+              id: 10,
+              title: "Extraire les chiffres",
+              description: "Écrivez un programme qui extrait tous les chiffres d'une chaîne.",
+              example: "'Prix: 45 euros' → '45'",
+              starter: "# Votre code ici\nchaine = 'Prix: 45 euros'\nchiffres = ''\n\n# Complétez le code\n\nprint(chiffres)",
+              solution: "chaine = 'Prix: 45 euros'\nchiffres = ''\nfor char in chaine:\n    if char.isdigit():\n        chiffres += char\nprint(chiffres)",
+              hint: "Utilisez la méthode isdigit() pour tester si un caractère est un chiffre"
+            }
+          ];
+
+          const runCode = () => {
+            try {
+              // Simulation simple de l'exécution Python
+              setOutput("⚠️ Simulation de sortie Python\n\nNote : Ceci est une interface de démonstration.\nPour tester votre code réellement, copiez-le dans un interpréteur Python.\n\n" + 
+                       "Code saisi :\n" + userCode);
+            } catch (error) {
+              setOutput("Erreur : " + error.message);
+            }
+          };
+
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 text-white">
+              <div className="max-w-7xl mx-auto p-4 md:p-8">
+                {/* Header */}
+                <div className="mb-8 text-center">
+                  <h1 className="text-4xl md:text-6xl font-bold mb-3 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                    🐍 Python - Les Chaînes de Caractères
+                  </h1>
+                  <p className="text-xl text-slate-300">Cours interactif avec exercices pratiques</p>
+                </div>
+
+                {/* Navigation */}
+                <div className="flex gap-2 md:gap-4 mb-8 justify-center flex-wrap">
+                  {sections.map((section) => (
+                    <button
+                      key={section.id}
+                      onClick={() => {
+                        setActiveSection(section.id);
+                        setSelectedExercise(null);
+                      }}
+                      className={`px-4 md:px-6 py-3 rounded-xl font-semibold text-sm md:text-base transition-all transform hover:scale-105 ${
+                        activeSection === section.id
+                          ? 'bg-gradient-to-r from-cyan-500 to-blue-600 shadow-lg shadow-blue-500/50'
+                          : 'bg-slate-800 hover:bg-slate-700'
+                      }`}
+                    >
+                      <span className="mr-2">{section.icon}</span>
+                      {section.title}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Content */}
+                <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-2xl border border-slate-700">
+                  {activeSection === 'intro' && <IntroSection />}
+                  {activeSection === 'basics' && <BasicsSection />}
+                  {activeSection === 'methods' && <MethodsSection />}
+                  {activeSection === 'slicing' && <SlicingSection />}
+                  {activeSection === 'qcm' && <QCMSection />}
+                  {activeSection === 'exercises' && (
+                    <ExercisesSection 
+                      exercises={exercises}
+                      selectedExercise={selectedExercise}
+                      setSelectedExercise={setSelectedExercise}
+                      userCode={userCode}
+                      setUserCode={setUserCode}
+                      output={output}
+                      runCode={runCode}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        function IntroSection() {
+          return (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold text-cyan-400 mb-6">📚 Introduction aux Chaînes de Caractères</h2>
+              
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-cyan-500">
+                <h3 className="text-xl font-semibold mb-3 text-cyan-300">Qu'est-ce qu'une chaîne de caractères ?</h3>
+                <p className="text-slate-200 leading-relaxed mb-4">
+                  Une chaîne de caractères (ou <strong>string</strong>) est une séquence de caractères. 
+                  En Python, les chaînes sont définies entre guillemets simples <code className="bg-slate-800 px-2 py-1 rounded">'texte'</code> 
+                  ou doubles <code className="bg-slate-800 px-2 py-1 rounded">"texte"</code>.
+                </p>
+                
+                <div className="code-editor mb-4">
+                  <pre>{`# Exemples de chaînes de caractères
+chaine1 = 'Bonjour'
+chaine2 = "Python"
+chaine3 = 'C\\'est génial!'  # Échappement avec \\
+chaine4 = """Texte sur
+plusieurs lignes"""  # Triple guillemets`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 rounded-xl p-6 border border-purple-500/30">
+                <h3 className="text-xl font-semibold mb-4 text-purple-300">🎯 Caractéristiques importantes</h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-slate-900/50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-cyan-400 mb-2">Immuables</h4>
+                    <p className="text-sm text-slate-300">Une fois créée, une chaîne ne peut pas être modifiée. Toute opération crée une nouvelle chaîne.</p>
+                  </div>
+                  <div className="bg-slate-900/50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-cyan-400 mb-2">Indexables</h4>
+                    <p className="text-sm text-slate-300">On peut accéder à chaque caractère via son index : <code className="bg-slate-800 px-1 rounded">chaine[0]</code></p>
+                  </div>
+                  <div className="bg-slate-900/50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-cyan-400 mb-2">Itérables</h4>
+                    <p className="text-sm text-slate-300">On peut parcourir une chaîne avec une boucle <code className="bg-slate-800 px-1 rounded">for</code></p>
+                  </div>
+                  <div className="bg-slate-900/50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-cyan-400 mb-2">Comparables</h4>
+                    <p className="text-sm text-slate-300">Les chaînes peuvent être comparées avec ==, &lt;, &gt;, etc.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6">
+                <h3 className="text-xl font-semibold mb-3 text-green-400">✨ Pourquoi c'est important ?</h3>
+                <ul className="space-y-2 text-slate-200">
+                  <li className="flex items-start">
+                    <span className="text-green-400 mr-2">•</span>
+                    <span>Le traitement de texte est omniprésent en programmation</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-400 mr-2">•</span>
+                    <span>Manipulation de données (fichiers, web, bases de données)</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-400 mr-2">•</span>
+                    <span>Validation et formatage d'entrées utilisateur</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-400 mr-2">•</span>
+                    <span>Cryptographie et encodage</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          );
+        }
+
+        function BasicsSection() {
+          return (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold text-cyan-400 mb-6">🔤 Les Bases des Chaînes</h2>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-cyan-500">
+                <h3 className="text-xl font-semibold mb-4 text-cyan-300">1. Concaténation</h3>
+                <p className="text-slate-200 mb-4">Combiner des chaînes avec l'opérateur <code className="bg-slate-800 px-2 py-1 rounded">+</code></p>
+                <div className="code-editor">
+                  <pre>{`prenom = "Jean"
+nom = "Dupont"
+nom_complet = prenom + " " + nom
+print(nom_complet)  # Affiche: Jean Dupont
+
+# Répétition avec *
+ligne = "-" * 20
+print(ligne)  # Affiche: --------------------`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-purple-500">
+                <h3 className="text-xl font-semibold mb-4 text-purple-300">2. Accès aux caractères</h3>
+                <p className="text-slate-200 mb-4">Utilisation des index (commence à 0)</p>
+                <div className="code-editor">
+                  <pre>{`texte = "Python"
+
+# Index positifs
+print(texte[0])   # P
+print(texte[1])   # y
+print(texte[5])   # n
+
+# Index négatifs (depuis la fin)
+print(texte[-1])  # n
+print(texte[-2])  # o
+
+# Longueur
+print(len(texte))  # 6`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-green-500">
+                <h3 className="text-xl font-semibold mb-4 text-green-300">3. Parcourir une chaîne</h3>
+                <div className="code-editor">
+                  <pre>{`texte = "Hello"
+
+# Méthode 1 : boucle for directe
+for caractere in texte:
+    print(caractere)
+
+# Méthode 2 : avec index
+for i in range(len(texte)):
+    print(f"Index {i}: {texte[i]}")
+
+# Méthode 3 : avec enumerate
+for index, char in enumerate(texte):
+    print(f"Position {index}: {char}")`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-blue-900/30 to-cyan-900/30 rounded-xl p-6 border border-blue-500/30">
+                <h3 className="text-xl font-semibold mb-4 text-blue-300">4. Vérification d'appartenance</h3>
+                <div className="code-editor">
+                  <pre>{`phrase = "Python est génial"
+
+# Opérateur in
+print("Python" in phrase)      # True
+print("Java" in phrase)        # False
+print("est" not in phrase)     # False
+
+# Méthode startswith() et endswith()
+print(phrase.startswith("Python"))  # True
+print(phrase.endswith("génial"))    # True`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-amber-900/30 rounded-xl p-6 border-l-4 border-amber-500">
+                <h3 className="text-xl font-semibold mb-3 text-amber-300">⚠️ Points importants</h3>
+                <ul className="space-y-2 text-slate-200 text-sm">
+                  <li className="flex items-start">
+                    <span className="text-amber-400 mr-2">→</span>
+                    <span>Les index commencent à 0, pas à 1</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-amber-400 mr-2">→</span>
+                    <span>Un index négatif compte depuis la fin (-1 = dernier caractère)</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-amber-400 mr-2">→</span>
+                    <span>Tenter d'accéder à un index inexistant génère une erreur IndexError</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-amber-400 mr-2">→</span>
+                    <span>Les chaînes sont immuables : on ne peut pas faire <code className="bg-slate-800 px-1 rounded">texte[0] = 'X'</code></span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          );
+        }
+
+        function MethodsSection() {
+          return (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold text-cyan-400 mb-6">🛠️ Méthodes des Chaînes</h2>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-cyan-500">
+                <h3 className="text-xl font-semibold mb-4 text-cyan-300">Transformation de casse</h3>
+                <div className="code-editor">
+                  <pre>{`texte = "Python Est Génial"
+
+print(texte.upper())        # PYTHON EST GÉNIAL
+print(texte.lower())        # python est génial
+print(texte.capitalize())   # Python est génial
+print(texte.title())        # Python Est Génial
+print(texte.swapcase())     # pYTHON eST gÉNIAL`}</pre>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-purple-500">
+                  <h3 className="text-lg font-semibold mb-3 text-purple-300">Recherche</h3>
+                  <div className="code-editor text-sm">
+                    <pre>{`texte = "Hello World"
+
+# find() et index()
+print(texte.find("World"))   # 6
+print(texte.find("Python"))  # -1
+# index() lève une erreur si non trouvé
+
+# count()
+print(texte.count("l"))      # 3`}</pre>
+                  </div>
+                </div>
+
+                <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-green-500">
+                  <h3 className="text-lg font-semibold mb-3 text-green-300">Nettoyage</h3>
+                  <div className="code-editor text-sm">
+                    <pre>{`texte = "  Hello  "
+
+# strip(), lstrip(), rstrip()
+print(texte.strip())   # "Hello"
+print(texte.lstrip())  # "Hello  "
+print(texte.rstrip())  # "  Hello"`}</pre>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-blue-500">
+                <h3 className="text-xl font-semibold mb-4 text-blue-300">Remplacement et séparation</h3>
+                <div className="code-editor">
+                  <pre>{`texte = "Python est super"
+
+# replace()
+nouveau = texte.replace("super", "génial")
+print(nouveau)  # Python est génial
+
+# split() - Diviser en liste
+mots = texte.split()
+print(mots)  # ['Python', 'est', 'super']
+
+# join() - Assembler depuis une liste
+separateur = "-"
+resultat = separateur.join(['a', 'b', 'c'])
+print(resultat)  # a-b-c`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-pink-500">
+                <h3 className="text-xl font-semibold mb-4 text-pink-300">Tests de type</h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="code-editor text-sm">
+                    <pre>{`# Tests alphabétiques
+"abc".isalpha()    # True
+"abc123".isalpha() # False
+
+# Tests numériques
+"123".isdigit()    # True
+"12.3".isdigit()   # False
+
+# Tests alphanumériques
+"abc123".isalnum() # True
+"abc 123".isalnum()# False`}</pre>
+                  </div>
+                  <div className="code-editor text-sm">
+                    <pre>{`# Tests de casse
+"ABC".isupper()    # True
+"abc".islower()    # True
+"Hello".istitle()  # True
+
+# Tests d'espaces
+"   ".isspace()    # True
+"a b".isspace()    # False`}</pre>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-cyan-900/30 to-blue-900/30 rounded-xl p-6 border border-cyan-500/30">
+                <h3 className="text-xl font-semibold mb-4 text-cyan-300">Formatage de chaînes</h3>
+                <div className="code-editor">
+                  <pre>{`nom = "Alice"
+age = 25
+
+# Méthode 1 : f-strings (Python 3.6+) - RECOMMANDÉ
+message = f"Je m'appelle {nom} et j'ai {age} ans"
+print(message)
+
+# Méthode 2 : format()
+message = "Je m'appelle {} et j'ai {} ans".format(nom, age)
+print(message)
+
+# Méthode 3 : % (ancien style)
+message = "Je m'appelle %s et j'ai %d ans" % (nom, age)
+print(message)
+
+# Formatage avec précision
+pi = 3.14159
+print(f"Pi = {pi:.2f}")  # Pi = 3.14`}</pre>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        function SlicingSection() {
+          return (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold text-cyan-400 mb-6">✂️ Découpage (Slicing)</h2>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-cyan-500">
+                <h3 className="text-xl font-semibold mb-4 text-cyan-300">Syntaxe de base</h3>
+                <p className="text-slate-200 mb-4">
+                  Le découpage permet d'extraire une sous-chaîne : 
+                  <code className="bg-slate-800 px-2 py-1 rounded ml-2">chaine[debut:fin:pas]</code>
+                </p>
+                <div className="bg-blue-900/30 p-4 rounded-lg mb-4">
+                  <ul className="space-y-2 text-slate-200 text-sm">
+                    <li><strong className="text-cyan-400">debut</strong> : index de départ (inclus)</li>
+                    <li><strong className="text-cyan-400">fin</strong> : index de fin (exclu)</li>
+                    <li><strong className="text-cyan-400">pas</strong> : incrément (optionnel, par défaut 1)</li>
+                  </ul>
+                </div>
+                <div className="code-editor">
+                  <pre>{`texte = "Python"
+#        0123456  (index positifs)
+#       -6-5-4-3-2-1 (index négatifs)
+
+print(texte[0:3])    # Pyt
+print(texte[2:5])    # tho
+print(texte[:3])     # Pyt (début omis = 0)
+print(texte[3:])     # hon (fin omise = jusqu'au bout)
+print(texte[:])      # Python (copie complète)`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-purple-500">
+                <h3 className="text-xl font-semibold mb-4 text-purple-300">Slicing avec le pas</h3>
+                <div className="code-editor">
+                  <pre>{`texte = "0123456789"
+
+# Pas positif
+print(texte[::2])     # 02468 (tous les 2 caractères)
+print(texte[1::2])    # 13579 (à partir de l'index 1, tous les 2)
+print(texte[::3])     # 0369  (tous les 3 caractères)
+
+# Pas négatif (inversion)
+print(texte[::-1])    # 9876543210 (inverse complète)
+print(texte[::-2])    # 97531 (inverse, tous les 2)
+print(texte[5:2:-1])  # 543 (de l'index 5 à 2, en arrière)`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-green-500">
+                <h3 className="text-xl font-semibold mb-4 text-green-300">Index négatifs</h3>
+                <div className="code-editor">
+                  <pre>{`texte = "Python"
+
+print(texte[-3:])      # hon (3 derniers caractères)
+print(texte[:-2])      # Pyth (tous sauf les 2 derniers)
+print(texte[-4:-1])    # tho (du 4ème en partant de la fin au dernier exclu)
+
+# Extraire les extrémités
+print(texte[0] + texte[-1])  # Pn (premier + dernier)`}</pre>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-gradient-to-r from-blue-900/30 to-cyan-900/30 rounded-xl p-6 border border-blue-500/30">
+                  <h3 className="text-lg font-semibold mb-3 text-blue-300">💡 Astuces pratiques</h3>
+                  <div className="code-editor text-sm">
+                    <pre>{`# Inverser une chaîne
+texte = "Python"
+inverse = texte[::-1]
+
+# Prendre un caractère sur deux
+texte = "abcdefgh"
+paires = texte[::2]  # aceg
+
+# Les 3 premiers et 3 derniers
+debut = texte[:3]
+fin = texte[-3:]`}</pre>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-r from-purple-900/30 to-pink-900/30 rounded-xl p-6 border border-purple-500/30">
+                  <h3 className="text-lg font-semibold mb-3 text-purple-300">⚠️ Pièges courants</h3>
+                  <div className="space-y-2 text-sm text-slate-200">
+                    <p className="flex items-start">
+                      <span className="text-red-400 mr-2">•</span>
+                      <span>La fin est <strong>exclue</strong> : <code className="bg-slate-800 px-1 rounded">texte[0:3]</code> va de 0 à 2</span>
+                    </p>
+                    <p className="flex items-start">
+                      <span className="text-red-400 mr-2">•</span>
+                      <span>Pas d'erreur si index hors limites en slicing</span>
+                    </p>
+                    <p className="flex items-start">
+                      <span className="text-red-400 mr-2">•</span>
+                      <span>Le slicing crée une nouvelle chaîne</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-amber-900/30 rounded-xl p-6 border-l-4 border-amber-500">
+                <h3 className="text-xl font-semibold mb-3 text-amber-300">📝 Exercice mental</h3>
+                <p className="text-slate-200 mb-3">Soit <code className="bg-slate-800 px-2 py-1 rounded">texte = "ABCDEFGH"</code></p>
+                <div className="grid md:grid-cols-2 gap-4 text-sm">
+                  <div className="bg-slate-900/50 p-3 rounded">
+                    <p className="text-cyan-400 mb-1">Que donne <code>texte[2:6]</code> ?</p>
+                    <p className="text-slate-300">Réponse : CDEF</p>
+                  </div>
+                  <div className="bg-slate-900/50 p-3 rounded">
+                    <p className="text-cyan-400 mb-1">Que donne <code>texte[-3:]</code> ?</p>
+                    <p className="text-slate-300">Réponse : FGH</p>
+                  </div>
+                  <div className="bg-slate-900/50 p-3 rounded">
+                    <p className="text-cyan-400 mb-1">Que donne <code>texte[::2]</code> ?</p>
+                    <p className="text-slate-300">Réponse : ACEG</p>
+                  </div>
+                  <div className="bg-slate-900/50 p-3 rounded">
+                    <p className="text-cyan-400 mb-1">Que donne <code>texte[::-1]</code> ?</p>
+                    <p className="text-slate-300">Réponse : HGFEDCBA</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        function QCMSection() {
+          const [answers, setAnswers] = useState({});
+          const [showResults, setShowResults] = useState(false);
+
+          const qcmQuestions = [
+            {
+              id: 1,
+              question: "Quel est le résultat de len('Python') ?",
+              options: ["5", "6", "7", "Erreur"],
+              correct: 1,
+              explanation: "La fonction len() retourne le nombre de caractères. 'Python' contient 6 caractères."
+            },
+            {
+              id: 2,
+              question: "Que vaut 'Hello'[1] ?",
+              options: ["'H'", "'e'", "'l'", "Erreur"],
+              correct: 1,
+              explanation: "L'indexation commence à 0. L'index 1 correspond au deuxième caractère 'e'."
+            },
+            {
+              id: 3,
+              question: "Que retourne 'abc' + 'def' ?",
+              options: ["'abc def'", "'abcdef'", "['abc', 'def']", "Erreur"],
+              correct: 1,
+              explanation: "L'opérateur + concatène deux chaînes sans espace."
+            },
+            {
+              id: 4,
+              question: "Que donne 'python'[-1] ?",
+              options: ["'p'", "'n'", "'o'", "Erreur"],
+              correct: 1,
+              explanation: "Les index négatifs comptent depuis la fin. -1 est le dernier caractère."
+            },
+            {
+              id: 5,
+              question: "Que retourne 'Python'.lower() ?",
+              options: ["'PYTHON'", "'python'", "'Python'", "Erreur"],
+              correct: 1,
+              explanation: "La méthode lower() convertit tous les caractères en minuscules."
+            },
+            {
+              id: 6,
+              question: "Que vaut 'Hello World'.split() ?",
+              options: ["'Hello', 'World'", "['Hello', 'World']", "('Hello', 'World')", "'HelloWorld'"],
+              correct: 1,
+              explanation: "split() sans argument divise sur les espaces et retourne une liste."
+            },
+            {
+              id: 7,
+              question: "Que retourne 'Python'[1:4] ?",
+              options: ["'yth'", "'Pyt'", "'ytho'", "'tho'"],
+              correct: 0,
+              explanation: "Le slicing [1:4] va de l'index 1 (inclus) à 4 (exclu): 'y', 't', 'h'."
+            },
+            {
+              id: 8,
+              question: "Que donne 'abc' * 3 ?",
+              options: ["'aabbcc'", "'abcabcabc'", "['abc', 'abc', 'abc']", "Erreur"],
+              correct: 1,
+              explanation: "L'opérateur * répète la chaîne le nombre de fois indiqué."
+            },
+            {
+              id: 9,
+              question: "Les chaînes en Python sont :",
+              options: ["Modifiables", "Immuables", "Parfois modifiables", "Dépend de la version"],
+              correct: 1,
+              explanation: "Les chaînes sont immuables : on ne peut pas modifier un caractère directement."
+            },
+            {
+              id: 10,
+              question: "Que retourne 'Python'[::-1] ?",
+              options: ["'Python'", "'nohtyP'", "'Pytho'", "Erreur"],
+              correct: 1,
+              explanation: "Le slicing avec un pas de -1 inverse la chaîne."
+            },
+            {
+              id: 11,
+              question: "Quelle méthode supprime les espaces en début et fin de chaîne ?",
+              options: ["remove()", "strip()", "trim()", "clean()"],
+              correct: 1,
+              explanation: "strip() supprime les espaces (et autres whitespace) au début et à la fin."
+            },
+            {
+              id: 12,
+              question: "Que retourne 'hello'.upper() ?",
+              options: ["'Hello'", "'HELLO'", "'hello'", "Erreur"],
+              correct: 1,
+              explanation: "upper() convertit tous les caractères en majuscules."
+            },
+            {
+              id: 13,
+              question: "Comment vérifier si 'o' est dans 'Python' ?",
+              options: ["'o' in 'Python'", "'o'.in('Python')", "in('o', 'Python')", "'Python'.has('o')"],
+              correct: 0,
+              explanation: "L'opérateur 'in' permet de tester l'appartenance."
+            },
+            {
+              id: 14,
+              question: "Que donne '-'.join(['a', 'b', 'c']) ?",
+              options: ["'abc'", "'a-b-c'", "['a-b-c']", "Erreur"],
+              correct: 1,
+              explanation: "join() assemble les éléments d'une liste avec le séparateur spécifié."
+            },
+            {
+              id: 15,
+              question: "Que retourne 'Python'.replace('P', 'J') ?",
+              options: ["'Python'", "'Jython'", "'python'", "Erreur"],
+              correct: 1,
+              explanation: "replace() remplace toutes les occurrences du premier argument par le second."
+            },
+            {
+              id: 16,
+              question: "Quel est le type de 'Python'[0] ?",
+              options: ["int", "char", "str", "character"],
+              correct: 2,
+              explanation: "En Python, un caractère est une chaîne de longueur 1, donc de type str."
+            },
+            {
+              id: 17,
+              question: "Que vaut 'Python'.find('th') ?",
+              options: ["2", "3", "4", "-1"],
+              correct: 0,
+              explanation: "find() retourne l'index de début de la sous-chaîne. Dans 'Python' : P(0) y(1) t(2) h(3) o(4) n(5). La sous-chaîne 'th' commence donc à l'index 2."
+            },
+            {
+              id: 18,
+              question: "Que donne 'hello'.count('l') ?",
+              options: ["1", "2", "3", "0"],
+              correct: 1,
+              explanation: "count() compte le nombre d'occurrences. Il y a deux 'l' dans 'hello'."
+            },
+            {
+              id: 19,
+              question: "Comment obtenir les 3 premiers caractères de 'Python' ?",
+              options: ["'Python'[0:3]", "'Python'[1:3]", "'Python'[:3]", "a et c"],
+              correct: 3,
+              explanation: "Les deux syntaxes [0:3] et [:3] donnent le même résultat (les 3 premiers)."
+            },
+            {
+              id: 20,
+              question: "Que retourne '123'.isdigit() ?",
+              options: ["False", "True", "None", "Erreur"],
+              correct: 1,
+              explanation: "isdigit() retourne True si tous les caractères sont des chiffres."
+            }
+          ];
+
+          const handleAnswer = (questionId, optionIndex) => {
+            setAnswers({...answers, [questionId]: optionIndex});
+            setShowResults(false);
+          };
+
+          const calculateScore = () => {
+            let correct = 0;
+            qcmQuestions.forEach(q => {
+              if (answers[q.id] === q.correct) correct++;
+            });
+            return correct;
+          };
+
+          const handleSubmit = () => {
+            setShowResults(true);
+          };
+
+          const score = calculateScore();
+          const percentage = Math.round((score / qcmQuestions.length) * 100);
+
+          return (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-3xl font-bold text-cyan-400">❓ QCM - Testez vos connaissances</h2>
+                {showResults && (
+                  <div className="text-right">
+                    <div className={`text-2xl font-bold ${percentage >= 80 ? 'text-green-400' : percentage >= 60 ? 'text-yellow-400' : 'text-red-400'}`}>
+                      Score: {score}/{qcmQuestions.length}
+                    </div>
+                    <div className="text-sm text-slate-300">{percentage}%</div>
+                  </div>
+                )}
+              </div>
+
+              {!showResults ? (
+                <div className="bg-blue-900/20 rounded-xl p-4 border border-blue-500/30 mb-6">
+                  <p className="text-slate-300">
+                    📝 Répondez aux {qcmQuestions.length} questions puis cliquez sur "Voir les résultats" pour corriger.
+                  </p>
+                </div>
+              ) : (
+                <div className={`rounded-xl p-6 border-2 mb-6 ${
+                  percentage >= 80 ? 'bg-green-900/30 border-green-500' :
+                  percentage >= 60 ? 'bg-yellow-900/30 border-yellow-500' :
+                  'bg-red-900/30 border-red-500'
+                }`}>
+                  <h3 className="text-xl font-bold mb-2">
+                    {percentage >= 80 ? '🎉 Excellent !' : percentage >= 60 ? '👍 Bien !' : '💪 Continuez !'}
+                  </h3>
+                  <p className="text-slate-200">
+                    {percentage >= 80 ? 'Vous maîtrisez très bien les chaînes de caractères !' :
+                     percentage >= 60 ? 'Vous avez de bonnes bases, quelques révisions et ce sera parfait !' :
+                     'Relisez le cours et réessayez, vous allez progresser !'}
+                  </p>
+                </div>
+              )}
+
+              <div className="space-y-4">
+                {qcmQuestions.map((q, idx) => (
+                  <div key={q.id} className={`bg-slate-900/50 rounded-xl p-6 border-2 ${
+                    showResults ? (
+                      answers[q.id] === q.correct ? 'border-green-500' : 
+                      answers[q.id] !== undefined ? 'border-red-500' : 'border-slate-700'
+                    ) : 'border-slate-700'
+                  }`}>
+                    <div className="flex items-start mb-4">
+                      <span className="bg-cyan-500 text-white font-bold px-3 py-1 rounded-full mr-3 text-sm">
+                        Q{idx + 1}
+                      </span>
+                      <h3 className="text-lg font-semibold text-white flex-1">{q.question}</h3>
+                      {showResults && answers[q.id] === q.correct && (
+                        <span className="text-green-400 text-2xl">✓</span>
+                      )}
+                      {showResults && answers[q.id] !== undefined && answers[q.id] !== q.correct && (
+                        <span className="text-red-400 text-2xl">✗</span>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      {q.options.map((option, optIdx) => (
+                        <button
+                          key={optIdx}
+                          onClick={() => !showResults && handleAnswer(q.id, optIdx)}
+                          disabled={showResults}
+                          className={`w-full text-left p-3 rounded-lg transition-all ${
+                            showResults ? (
+                              optIdx === q.correct ? 'bg-green-600 text-white font-semibold' :
+                              answers[q.id] === optIdx ? 'bg-red-600 text-white' :
+                              'bg-slate-800 text-slate-400'
+                            ) : (
+                              answers[q.id] === optIdx ? 
+                              'bg-cyan-600 text-white font-semibold' : 
+                              'bg-slate-800 hover:bg-slate-700 text-slate-200'
+                            )
+                          } ${showResults ? 'cursor-default' : 'cursor-pointer'}`}
+                        >
+                          <span className="font-mono">{String.fromCharCode(65 + optIdx)})</span> {option}
+                        </button>
+                      ))}
+                    </div>
+
+                    {showResults && (
+                      <div className="mt-4 bg-slate-800/50 p-4 rounded-lg border-l-4 border-blue-500">
+                        <p className="text-sm text-slate-300">
+                          <strong className="text-blue-400">💡 Explication :</strong> {q.explanation}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex gap-4 justify-center mt-8">
+                {!showResults ? (
+                  <button
+                    onClick={handleSubmit}
+                    className="px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 rounded-xl font-bold text-lg transition-all transform hover:scale-105 shadow-lg"
+                  >
+                    📊 Voir les résultats
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setAnswers({});
+                      setShowResults(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-xl font-bold text-lg transition-all transform hover:scale-105 shadow-lg"
+                  >
+                    🔄 Recommencer le QCM
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        function ExercisesSection({ exercises, selectedExercise, setSelectedExercise, userCode, setUserCode, output, runCode }) {
+          const currentExercise = exercises.find(ex => ex.id === selectedExercise);
+          const [showSolution, setShowSolution] = useState(false);
+          const [showHint, setShowHint] = useState(false);
+
+          if (!selectedExercise) {
+            return (
+              <div className="space-y-6">
+                <h2 className="text-3xl font-bold text-cyan-400 mb-6">💪 Exercices Pratiques</h2>
+                <p className="text-slate-300 text-lg mb-6">Choisissez un exercice pour commencer :</p>
+                
+                <div className="grid md:grid-cols-2 gap-6">
+                  {exercises.map((exercise) => (
+                    <div 
+                      key={exercise.id}
+                      onClick={() => {
+                        setSelectedExercise(exercise.id);
+                        setUserCode(exercise.starter);
+                        setShowSolution(false);
+                        setShowHint(false);
+                      }}
+                      className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl p-6 border-2 border-slate-700 hover:border-cyan-500 cursor-pointer transition-all transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/20"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <h3 className="text-xl font-bold text-cyan-400">Exercice {exercise.id}</h3>
+                        <span className="bg-cyan-500/20 text-cyan-400 text-xs px-3 py-1 rounded-full">
+                          {exercise.id <= 2 ? 'Facile' : exercise.id >= 5 && exercise.id <= 7 ? 'Difficile' : 'Moyen'}
+                        </span>
+                      </div>
+                      <h4 className="text-lg font-semibold text-white mb-2">{exercise.title}</h4>
+                      <p className="text-slate-300 text-sm mb-3">{exercise.description}</p>
+                      <div className="bg-slate-900/50 p-3 rounded text-sm">
+                        <span className="text-green-400 font-mono">{exercise.example}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-3xl font-bold text-cyan-400">Exercice {currentExercise.id} : {currentExercise.title}</h2>
+                <button
+                  onClick={() => {
+                    setSelectedExercise(null);
+                    setShowSolution(false);
+                    setShowHint(false);
+                  }}
+                  className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm"
+                >
+                  ← Retour
+                </button>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-cyan-500">
+                <h3 className="text-lg font-semibold mb-2 text-cyan-300">📋 Consigne</h3>
+                <p className="text-slate-200 mb-3">{currentExercise.description}</p>
+                <div className="bg-slate-800/50 p-3 rounded">
+                  <p className="text-sm text-slate-400">Exemple :</p>
+                  <p className="text-green-400 font-mono">{currentExercise.example}</p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-4">
+                <button
+                  onClick={() => setShowHint(!showHint)}
+                  className="px-4 py-3 bg-yellow-600 hover:bg-yellow-500 rounded-lg font-semibold transition-all"
+                >
+                  💡 {showHint ? 'Masquer' : 'Afficher'} l'indice
+                </button>
+                <button
+                  onClick={() => setShowSolution(!showSolution)}
+                  className="px-4 py-3 bg-orange-600 hover:bg-orange-500 rounded-lg font-semibold transition-all"
+                >
+                  🔑 {showSolution ? 'Masquer' : 'Voir'} la solution
+                </button>
+                <button
+                  onClick={() => setUserCode(currentExercise.starter)}
+                  className="px-4 py-3 bg-slate-600 hover:bg-slate-500 rounded-lg font-semibold transition-all"
+                >
+                  🔄 Réinitialiser
+                </button>
+              </div>
+
+              {showHint && (
+                <div className="bg-yellow-900/30 rounded-xl p-4 border-l-4 border-yellow-500">
+                  <p className="text-yellow-200">💡 <strong>Indice :</strong> {currentExercise.hint}</p>
+                </div>
+              )}
+
+              {showSolution && (
+                <div className="bg-green-900/30 rounded-xl p-4 border-l-4 border-green-500">
+                  <h4 className="text-green-300 font-semibold mb-2">✅ Solution :</h4>
+                  <div className="code-editor">
+                    <pre>{currentExercise.solution}</pre>
+                  </div>
+                </div>
+              )}
+
+              <div className="bg-slate-900/50 rounded-xl p-6">
+                <h3 className="text-lg font-semibold mb-3 text-white">✏️ Votre code</h3>
+                <textarea
+                  value={userCode}
+                  onChange={(e) => setUserCode(e.target.value)}
+                  className="w-full h-64 bg-slate-800 text-slate-200 font-mono text-sm p-4 rounded-lg border border-slate-600 focus:border-cyan-500 focus:outline-none resize-none"
+                  placeholder="Écrivez votre code ici..."
+                  spellCheck="false"
+                />
+                <button
+                  onClick={runCode}
+                  className="mt-4 px-6 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 rounded-lg font-semibold transition-all transform hover:scale-105 shadow-lg"
+                >
+                  ▶️ Exécuter le code
+                </button>
+              </div>
+
+              {output && (
+                <div className="bg-slate-900/50 rounded-xl p-6">
+                  <h3 className="text-lg font-semibold mb-3 text-white">📤 Sortie</h3>
+                  <div className="output-console">
+                    {output}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        }
+
+        ReactDOM.render(<PythonStringCourse />, document.getElementById('root'));
+    </script>
+</body>
+</html>

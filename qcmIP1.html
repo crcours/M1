@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Les Adresses IP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00ff88;
+            --secondary: #0066ff;
+            --accent: #ff0066;
+            --bg-dark: #0a0e27;
+            --bg-medium: #1a1f3a;
+            --text-light: #e0e6ff;
+            --text-muted: #8892b0;
+            --correct: #00ff88;
+            --incorrect: #ff0066;
+        }
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated network background */
+        .network-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .node {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .connection {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+            transform-origin: left center;
+            animation: flow 2s linear infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        @keyframes flow {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            letter-spacing: -2px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+        }
+
+        .progress-container {
+            background: var(--bg-medium);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            animation: fadeIn 1s ease-out;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .score {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .question-card {
+            background: var(--bg-medium);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            animation: fadeInUp 0.6s ease-out backwards;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-card.answered {
+            opacity: 0.7;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .question-number {
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .question-text {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            color: var(--text-light);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 18px 22px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: rgba(0, 255, 136, 0.05);
+            transform: translateX(5px);
+        }
+
+        .option:hover::before {
+            left: 100%;
+        }
+
+        .option.selected {
+            border-color: var(--secondary);
+            background: rgba(0, 102, 255, 0.15);
+        }
+
+        .option.correct {
+            border-color: var(--correct);
+            background: rgba(0, 255, 136, 0.15);
+            animation: correctPulse 0.6s ease;
+        }
+
+        .option.incorrect {
+            border-color: var(--incorrect);
+            background: rgba(255, 0, 102, 0.15);
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback.correct {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 4px solid var(--correct);
+            color: var(--correct);
+        }
+
+        .feedback.incorrect {
+            background: rgba(255, 0, 102, 0.1);
+            border-left: 4px solid var(--incorrect);
+            color: var(--incorrect);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            border: none;
+            border-radius: 12px;
+            color: var(--bg-dark);
+            font-family: 'Syne', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 255, 136, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .results {
+            background: var(--bg-medium);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            border: 2px solid var(--primary);
+            animation: scaleIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .results h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .final-score {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 20px 0;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+        }
+
+        .performance-message {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .restart-btn {
+            padding: 15px 40px;
+            background: transparent;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            color: var(--primary);
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .restart-btn:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+            transform: translateY(-2px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .question-text {
+                font-size: 1.1rem;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .question-card {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated network background -->
+    <div class="network-bg" id="networkBg"></div>
+
+    <div class="container">
+        <header>
+            <h1>QUIZ ADRESSES IP</h1>
+            <p class="subtitle">Réseaux et adressage IP</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text">
+                <span>Question <span id="currentQuestion">0</span> / <span id="totalQuestions">0</span></span>
+                <span class="score">Score: <span id="currentScore">0</span> / <span id="maxScore">0</span></span>
+            </div>
+        </div>
+
+        <div id="quizContainer"></div>
+
+        <button class="submit-btn hidden" id="submitBtn">Voir les résultats</button>
+
+        <div class="results hidden" id="results">
+            <h2>Quiz terminé !</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p class="performance-message" id="performanceMessage"></p>
+            <button class="restart-btn" onclick="location.reload()">Recommencer</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "Quel type de prise est le plus utilisé pour les câbles Ethernet ?",
+                options: [
+                    "RJ11",
+                    "RJ45",
+                    "USB-C",
+                    "HDMI"
+                ],
+                correct: 1,
+                explanation: "La prise RJ45 est le type de connecteur standard utilisé aux extrémités des câbles Ethernet pour connecter les ordinateurs en réseau."
+            },
+            {
+                question: "Quel équipement doit-on utiliser pour connecter plus de 2 ordinateurs en réseau ?",
+                options: [
+                    "Un routeur seulement",
+                    "Un câble croisé",
+                    "Un switch (commutateur réseau)",
+                    "Une carte réseau supplémentaire"
+                ],
+                correct: 2,
+                explanation: "Un switch (commutateur réseau) est nécessaire pour connecter plusieurs ordinateurs. Il possède plusieurs prises RJ45 permettant de relier chaque machine au réseau."
+            },
+            {
+                question: "Quelle est la plage de valeurs possibles pour chaque octet d'une adresse IP (a, b, c et d dans a.b.c.d) ?",
+                options: [
+                    "0 à 127",
+                    "1 à 256",
+                    "0 à 255",
+                    "1 à 255"
+                ],
+                correct: 2,
+                explanation: "Chaque octet d'une adresse IPv4 peut avoir une valeur comprise entre 0 et 255, car il est codé sur 8 bits (1 octet)."
+            },
+            {
+                question: "Pour une adresse IP 192.168.2.5/255.255.255.0, quelle est l'adresse réseau ?",
+                options: [
+                    "192.0.0.0",
+                    "192.168.0.0",
+                    "192.168.2.0",
+                    "192.168.2.5"
+                ],
+                correct: 2,
+                explanation: "Avec un masque 255.255.255.0, les trois premiers octets (192.168.2) identifient le réseau, le dernier octet (5) identifie la machine. L'adresse réseau est donc 192.168.2.0."
+            },
+            {
+                question: "Deux machines avec les adresses suivantes peuvent-elles communiquer ? Machine A : 172.23.4.7/255.255.0.0 et Machine B : 172.23.5.8/255.255.0.0",
+                options: [
+                    "Oui, elles peuvent communiquer",
+                    "Non, elles ne peuvent pas communiquer",
+                    "Seulement si elles utilisent le WiFi",
+                    "Seulement avec un routeur"
+                ],
+                correct: 0,
+                explanation: "Oui ! Avec le masque 255.255.0.0, les deux premiers octets identifient le réseau. Les deux machines ont 172.23 en commun, donc elles appartiennent au même réseau 172.23.0.0 et peuvent communiquer."
+            },
+            {
+                question: "Que signifie le masque de sous-réseau 255.255.0.0 pour une adresse a.b.c.d ?",
+                options: [
+                    "a identifie le réseau, b.c.d identifient la machine",
+                    "a.b identifient le réseau, c.d identifient la machine",
+                    "a.b.c identifient le réseau, d identifie la machine",
+                    "Tout l'adresse identifie le réseau"
+                ],
+                correct: 1,
+                explanation: "Avec un masque 255.255.0.0, les octets où il y a 255 (a et b) sont pour le réseau, les octets où il y a 0 (c et d) sont pour les machines."
+            },
+            {
+                question: "Laquelle de ces adresses IP N'EST PAS utilisable pour une machine ?",
+                options: [
+                    "192.168.1.50/255.255.255.0",
+                    "192.168.1.0/255.255.255.0",
+                    "192.168.1.100/255.255.255.0",
+                    "192.168.1.254/255.255.255.0"
+                ],
+                correct: 1,
+                explanation: "L'adresse 192.168.1.0 est une adresse réseau (tous les octets machines à 0) et ne peut pas être attribuée à une machine individuelle."
+            },
+            {
+                question: "Qu'est-ce qu'une adresse de broadcast ?",
+                options: [
+                    "L'adresse du routeur principal",
+                    "L'adresse réseau",
+                    "Une adresse qui permet d'envoyer des données vers toutes les machines du réseau",
+                    "L'adresse du serveur DNS"
+                ],
+                correct: 2,
+                explanation: "Une adresse de broadcast (tous les octets machines à 255) permet d'envoyer des données simultanément vers toutes les machines d'un réseau. Par exemple : 192.168.1.255/255.255.255.0."
+            },
+            {
+                question: "Combien de machines peut avoir au maximum un réseau d'adresse 192.168.2.0/255.255.255.0 ?",
+                options: [
+                    "254 machines",
+                    "255 machines",
+                    "256 machines",
+                    "253 machines"
+                ],
+                correct: 0,
+                explanation: "Avec un masque 255.255.255.0, le dernier octet identifie les machines (0-255 = 256 valeurs). Mais on retire l'adresse réseau (.0) et l'adresse de broadcast (.255), donc 256 - 2 = 254 machines utilisables."
+            },
+            {
+                question: "Quelle commande permet de connaître la configuration réseau d'une machine (adresse IP, masque, etc.) ?",
+                options: [
+                    "ping",
+                    "netstat",
+                    "ipconfig (Windows) ou ifconfig (Unix/Linux)",
+                    "traceroute"
+                ],
+                correct: 2,
+                explanation: "La commande ipconfig (Windows) ou ifconfig (Unix/Linux/macOS) permet d'afficher la configuration réseau de la machine : adresse IP, masque de sous-réseau, passerelle, etc."
+            },
+            {
+                question: "À quoi sert la commande 'ping' ?",
+                options: [
+                    "À configurer l'adresse IP d'une machine",
+                    "À envoyer des paquets pour tester si une machine est atteignable",
+                    "À afficher la liste des machines du réseau",
+                    "À redémarrer la carte réseau"
+                ],
+                correct: 1,
+                explanation: "La commande ping envoie des paquets de données vers une machine distante pour vérifier si elle est atteignable et mesurer le temps de réponse. Exemple : ping 192.168.0.2"
+            },
+            {
+                question: "Quelle est la différence principale entre un réseau filaire et un réseau WiFi ?",
+                options: [
+                    "Le réseau WiFi est plus rapide",
+                    "Le réseau filaire utilise des câbles, le WiFi utilise des ondes radio",
+                    "Le réseau WiFi ne nécessite pas d'adresse IP",
+                    "Le réseau filaire ne nécessite pas de switch"
+                ],
+                correct: 1,
+                explanation: "La différence principale est le mode de transmission : les réseaux filaires utilisent des câbles Ethernet pour transmettre les données, tandis que les réseaux WiFi utilisent des ondes radio sans fil."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answeredQuestions = new Set();
+
+        function initQuiz() {
+            document.getElementById('totalQuestions').textContent = quizData.length;
+            document.getElementById('maxScore').textContent = quizData.length;
+            renderQuestions();
+            updateProgress();
+            createNetworkBackground();
+        }
+
+        function createNetworkBackground() {
+            const bg = document.getElementById('networkBg');
+            const nodeCount = 15;
+            const nodes = [];
+
+            // Create nodes
+            for (let i = 0; i < nodeCount; i++) {
+                const node = document.createElement('div');
+                node.className = 'node';
+                node.style.left = Math.random() * 100 + '%';
+                node.style.top = Math.random() * 100 + '%';
+                node.style.animationDelay = Math.random() * 3 + 's';
+                bg.appendChild(node);
+                nodes.push({
+                    element: node,
+                    x: parseFloat(node.style.left),
+                    y: parseFloat(node.style.top)
+                });
+            }
+
+            // Create connections
+            for (let i = 0; i < nodeCount; i++) {
+                const randomConnections = Math.floor(Math.random() * 2) + 1;
+                for (let j = 0; j < randomConnections; j++) {
+                    const targetIndex = Math.floor(Math.random() * nodeCount);
+                    if (targetIndex !== i) {
+                        const connection = document.createElement('div');
+                        connection.className = 'connection';
+                        
+                        const x1 = nodes[i].x;
+                        const y1 = nodes[i].y;
+                        const x2 = nodes[targetIndex].x;
+                        const y2 = nodes[targetIndex].y;
+                        
+                        const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                        const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                        
+                        connection.style.width = length + 'vw';
+                        connection.style.left = x1 + '%';
+                        connection.style.top = y1 + '%';
+                        connection.style.transform = `rotate(${angle}deg)`;
+                        connection.style.animationDelay = Math.random() * 2 + 's';
+                        
+                        bg.appendChild(connection);
+                    }
+                }
+            }
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+
+            quizData.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                card.innerHTML = `
+                    <div class="question-number">QUESTION ${index + 1}</div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="options">
+                        ${q.options.map((option, optIndex) => `
+                            <div class="option" data-question="${index}" data-option="${optIndex}">
+                                ${option}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback hidden" id="feedback-${index}"></div>
+                `;
+                
+                container.appendChild(card);
+            });
+
+            // Add click listeners
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', handleOptionClick);
+            });
+        }
+
+        function handleOptionClick(e) {
+            const questionIndex = parseInt(e.target.dataset.question);
+            const optionIndex = parseInt(e.target.dataset.option);
+            
+            // If already answered, don't allow change
+            if (answeredQuestions.has(questionIndex)) return;
+            
+            const question = quizData[questionIndex];
+            const allOptions = document.querySelectorAll(`[data-question="${questionIndex}"]`);
+            const feedback = document.getElementById(`feedback-${questionIndex}`);
+            
+            // Mark as answered
+            answeredQuestions.add(questionIndex);
+            
+            // Disable all options for this question
+            allOptions.forEach(opt => {
+                opt.classList.add('disabled');
+                if (parseInt(opt.dataset.option) === question.correct) {
+                    opt.classList.add('correct');
+                }
+            });
+            
+            // Check if correct
+            const isCorrect = optionIndex === question.correct;
+            
+            if (isCorrect) {
+                score++;
+                e.target.classList.add('correct');
+                feedback.className = 'feedback correct';
+                feedback.innerHTML = `✓ Correct ! ${question.explanation}`;
+            } else {
+                e.target.classList.add('incorrect');
+                feedback.className = 'feedback incorrect';
+                feedback.innerHTML = `✗ Incorrect. ${question.explanation}`;
+            }
+            
+            feedback.classList.remove('hidden');
+            
+            // Mark card as answered
+            e.target.closest('.question-card').classList.add('answered');
+            
+            updateProgress();
+            
+            // Show submit button if all answered
+            if (answeredQuestions.size === quizData.length) {
+                document.getElementById('submitBtn').classList.remove('hidden');
+            }
+        }
+
+        function updateProgress() {
+            const progress = (answeredQuestions.size / quizData.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('currentQuestion').textContent = answeredQuestions.size;
+            document.getElementById('currentScore').textContent = score;
+        }
+
+        function showResults() {
+            document.getElementById('quizContainer').classList.add('hidden');
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.querySelector('.progress-container').classList.add('hidden');
+            
+            const results = document.getElementById('results');
+            const percentage = Math.round((score / quizData.length) * 100);
+            
+            document.getElementById('finalScore').textContent = `${score} / ${quizData.length}`;
+            
+            let message = '';
+            if (percentage === 100) {
+                message = '🎉 Parfait ! Vous maîtrisez parfaitement les adresses IP et les réseaux !';
+            } else if (percentage >= 80) {
+                message = '🌟 Excellent ! Vous avez une très bonne compréhension de l\'adressage IP.';
+            } else if (percentage >= 60) {
+                message = '👍 Bien joué ! Vous avez de bonnes bases sur les réseaux IP.';
+            } else if (percentage >= 40) {
+                message = '📚 Pas mal, mais revoyez les masques de sous-réseau et les adresses réservées.';
+            } else {
+                message = '💪 Continuez à étudier les concepts d\'adressage IP !';
+            }
+            
+            document.getElementById('performanceMessage').textContent = message;
+            results.classList.remove('hidden');
+        }
+
+        document.getElementById('submitBtn').addEventListener('click', showResults);
+
+        // Initialize quiz
+        initQuiz();
+    </script>
+</body>
+</html>

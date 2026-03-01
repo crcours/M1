@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Introduction aux Réseaux Informatiques</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00ff88;
+            --secondary: #0066ff;
+            --accent: #ff0066;
+            --bg-dark: #0a0e27;
+            --bg-medium: #1a1f3a;
+            --text-light: #e0e6ff;
+            --text-muted: #8892b0;
+            --correct: #00ff88;
+            --incorrect: #ff0066;
+        }
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated network background */
+        .network-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .node {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .connection {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+            transform-origin: left center;
+            animation: flow 2s linear infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        @keyframes flow {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            letter-spacing: -2px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+        }
+
+        .progress-container {
+            background: var(--bg-medium);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            animation: fadeIn 1s ease-out;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .score {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .question-card {
+            background: var(--bg-medium);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            animation: fadeInUp 0.6s ease-out backwards;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-card.answered {
+            opacity: 0.7;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .question-number {
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .question-text {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            color: var(--text-light);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 18px 22px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: rgba(0, 255, 136, 0.05);
+            transform: translateX(5px);
+        }
+
+        .option:hover::before {
+            left: 100%;
+        }
+
+        .option.selected {
+            border-color: var(--secondary);
+            background: rgba(0, 102, 255, 0.15);
+        }
+
+        .option.correct {
+            border-color: var(--correct);
+            background: rgba(0, 255, 136, 0.15);
+            animation: correctPulse 0.6s ease;
+        }
+
+        .option.incorrect {
+            border-color: var(--incorrect);
+            background: rgba(255, 0, 102, 0.15);
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback.correct {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 4px solid var(--correct);
+            color: var(--correct);
+        }
+
+        .feedback.incorrect {
+            background: rgba(255, 0, 102, 0.1);
+            border-left: 4px solid var(--incorrect);
+            color: var(--incorrect);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            border: none;
+            border-radius: 12px;
+            color: var(--bg-dark);
+            font-family: 'Syne', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 255, 136, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .results {
+            background: var(--bg-medium);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            border: 2px solid var(--primary);
+            animation: scaleIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .results h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .final-score {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 20px 0;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+        }
+
+        .performance-message {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .restart-btn {
+            padding: 15px 40px;
+            background: transparent;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            color: var(--primary);
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .restart-btn:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+            transform: translateY(-2px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .question-text {
+                font-size: 1.1rem;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .question-card {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated network background -->
+    <div class="network-bg" id="networkBg"></div>
+
+    <div class="container">
+        <header>
+            <h1>QUIZ RÉSEAUX</h1>
+            <p class="subtitle">Introduction aux réseaux informatiques</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text">
+                <span>Question <span id="currentQuestion">0</span> / <span id="totalQuestions">0</span></span>
+                <span class="score">Score: <span id="currentScore">0</span> / <span id="maxScore">0</span></span>
+            </div>
+        </div>
+
+        <div id="quizContainer"></div>
+
+        <button class="submit-btn hidden" id="submitBtn">Voir les résultats</button>
+
+        <div class="results hidden" id="results">
+            <h2>Quiz terminé !</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p class="performance-message" id="performanceMessage"></p>
+            <button class="restart-btn" onclick="location.reload()">Recommencer</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "Quel type de réseau permet de connecter des appareils à l'échelle d'une personne (par exemple, clavier et souris par Bluetooth) ?",
+                options: [
+                    "LAN (Local Area Network)",
+                    "PAN (Personal Area Network)",
+                    "WAN (Wide Area Network)",
+                    "MAN (Metropolitan Area Network)"
+                ],
+                correct: 1,
+                explanation: "Le PAN (Personal Area Network) est un réseau personnel qui permet à des appareils de communiquer à l'échelle d'une personne, comme la connexion Bluetooth."
+            },
+            {
+                question: "Qu'est-ce qu'un protocole de réseau ?",
+                options: [
+                    "Un type de câble pour connecter les ordinateurs",
+                    "Un ensemble de règles et de conventions pour le transfert de données",
+                    "Un logiciel antivirus pour protéger le réseau",
+                    "Un type de routeur spécialisé"
+                ],
+                correct: 1,
+                explanation: "Les protocoles de réseaux sont un ensemble de règles et de conventions nécessaires (mais pas suffisantes) pour permettre le transfert de données entre les machines."
+            },
+            {
+                question: "Dans l'analogie avec le réseau postal, à quoi correspond l'adresse IP dans un réseau informatique ?",
+                options: [
+                    "Au timbre postal",
+                    "À l'adresse postale du destinataire",
+                    "Au facteur",
+                    "À la boîte aux lettres"
+                ],
+                correct: 1,
+                explanation: "Tout comme l'adresse postale identifie de manière unique une destination, l'adresse IP est un identifiant unique qui permet d'acheminer les messages vers une machine spécifique."
+            },
+            {
+                question: "Qu'est-ce qu'un graphe dans le contexte des réseaux ?",
+                options: [
+                    "Un diagramme en barres montrant la performance du réseau",
+                    "Une structure composée de nœuds reliés par des arcs",
+                    "Un outil pour mesurer la vitesse de connexion",
+                    "Un type de protocole réseau"
+                ],
+                correct: 1,
+                explanation: "Un graphe est une structure de données composée de nœuds (représentant des entités) connectés entre eux par des arcs (représentant les liens)."
+            },
+            {
+                question: "Dans une topologie en bus, que se passe-t-il lorsqu'un nœud envoie de l'information ?",
+                options: [
+                    "Seul le nœud voisin reçoit l'information",
+                    "L'information est envoyée uniquement au hub central",
+                    "Tous les autres nœuds du réseau reçoivent l'information",
+                    "L'information est perdue"
+                ],
+                correct: 2,
+                explanation: "Dans une topologie de bus, tous les nœuds sont connectés au même support (bus). Quand un nœud envoie de l'information, tous les autres la reçoivent."
+            },
+            {
+                question: "Quelle est la caractéristique principale d'une topologie en étoile ?",
+                options: [
+                    "Tous les nœuds sont connectés entre eux",
+                    "Les nœuds forment un anneau fermé",
+                    "Tous les nœuds sont connectés à un hub central",
+                    "Les nœuds sont connectés à un câble commun"
+                ],
+                correct: 2,
+                explanation: "Dans une topologie en étoile, tous les nœuds sont connectés à un seul élément central (hub ou concentrateur) qui redistribue l'information."
+            },
+            {
+                question: "Quel est le principal avantage d'une topologie maillée ?",
+                options: [
+                    "Facilité de mise en œuvre",
+                    "Coût minimal",
+                    "Très forte robustesse face aux pannes",
+                    "Vitesse maximale de transmission"
+                ],
+                correct: 2,
+                explanation: "La topologie maillée offre une très forte robustesse. Si un nœud ou un arc tombe en panne, il existe généralement d'autres chemins pour acheminer l'information. Internet utilise cette topologie."
+            },
+            {
+                question: "Quel type de réseau couvre de grandes régions géographiques ?",
+                options: [
+                    "PAN (Personal Area Network)",
+                    "LAN (Local Area Network)",
+                    "WAN (Wide Area Network)",
+                    "Topologie en étoile"
+                ],
+                correct: 2,
+                explanation: "Le WAN (Wide Area Network) est un réseau étendu qui couvre de grandes régions géographiques, contrairement au LAN qui est limité à une zone locale."
+            },
+            {
+                question: "Dans une topologie en anneau, comment l'information circule-t-elle ?",
+                options: [
+                    "Directement du nœud source au nœud destination",
+                    "Par le hub central",
+                    "De voisin en voisin jusqu'à destination",
+                    "Simultanément à tous les nœuds"
+                ],
+                correct: 2,
+                explanation: "Dans une topologie en anneau, chaque nœud est connecté à deux voisins. L'information est transmise de voisin en voisin jusqu'à atteindre sa destination."
+            },
+            {
+                question: "Qu'est-ce qu'Internet selon le document ?",
+                options: [
+                    "Un réseau local (LAN)",
+                    "Un réseau personnel (PAN)",
+                    "Un inter-réseau (internetwork) couvrant la planète",
+                    "Une topologie en étoile géante"
+                ],
+                correct: 2,
+                explanation: "Internet est un exemple d'inter-réseau qui connecte plusieurs sous-réseaux de taille et de nature différentes et couvre l'ensemble de notre planète."
+            },
+            {
+                question: "Quels sont les deux types de topologies les plus utilisés selon le document ?",
+                options: [
+                    "Bus et anneau",
+                    "Étoile et maillée",
+                    "Anneau et complètement connectée",
+                    "Bus et complètement connectée"
+                ],
+                correct: 1,
+                explanation: "Les topologies en étoile (pour la facilité et l'efficacité) et maillée (pour la robustesse) sont les plus utilisées. Les réseaux WiFi et Ethernet utilisent l'étoile, tandis qu'Internet utilise le maillage."
+            },
+            {
+                question: "Dans le parallèle avec le réseau postal, à quoi correspondent les 'routes, voies de chemin de fer et voies aériennes' ?",
+                options: [
+                    "Aux protocoles de réseau",
+                    "Aux adresses IP",
+                    "Aux supports informatiques (câbles, antennes)",
+                    "Aux routeurs"
+                ],
+                correct: 2,
+                explanation: "Les routes physiques du réseau postal correspondent aux supports informatiques (câbles, antennes, etc.) qui permettent de faire transiter l'information entre les ordinateurs."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answeredQuestions = new Set();
+
+        function initQuiz() {
+            document.getElementById('totalQuestions').textContent = quizData.length;
+            document.getElementById('maxScore').textContent = quizData.length;
+            renderQuestions();
+            updateProgress();
+            createNetworkBackground();
+        }
+
+        function createNetworkBackground() {
+            const bg = document.getElementById('networkBg');
+            const nodeCount = 15;
+            const nodes = [];
+
+            // Create nodes
+            for (let i = 0; i < nodeCount; i++) {
+                const node = document.createElement('div');
+                node.className = 'node';
+                node.style.left = Math.random() * 100 + '%';
+                node.style.top = Math.random() * 100 + '%';
+                node.style.animationDelay = Math.random() * 3 + 's';
+                bg.appendChild(node);
+                nodes.push({
+                    element: node,
+                    x: parseFloat(node.style.left),
+                    y: parseFloat(node.style.top)
+                });
+            }
+
+            // Create connections
+            for (let i = 0; i < nodeCount; i++) {
+                const randomConnections = Math.floor(Math.random() * 2) + 1;
+                for (let j = 0; j < randomConnections; j++) {
+                    const targetIndex = Math.floor(Math.random() * nodeCount);
+                    if (targetIndex !== i) {
+                        const connection = document.createElement('div');
+                        connection.className = 'connection';
+                        
+                        const x1 = nodes[i].x;
+                        const y1 = nodes[i].y;
+                        const x2 = nodes[targetIndex].x;
+                        const y2 = nodes[targetIndex].y;
+                        
+                        const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                        const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                        
+                        connection.style.width = length + 'vw';
+                        connection.style.left = x1 + '%';
+                        connection.style.top = y1 + '%';
+                        connection.style.transform = `rotate(${angle}deg)`;
+                        connection.style.animationDelay = Math.random() * 2 + 's';
+                        
+                        bg.appendChild(connection);
+                    }
+                }
+            }
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+
+            quizData.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                card.innerHTML = `
+                    <div class="question-number">QUESTION ${index + 1}</div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="options">
+                        ${q.options.map((option, optIndex) => `
+                            <div class="option" data-question="${index}" data-option="${optIndex}">
+                                ${option}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback hidden" id="feedback-${index}"></div>
+                `;
+                
+                container.appendChild(card);
+            });
+
+            // Add click listeners
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', handleOptionClick);
+            });
+        }
+
+        function handleOptionClick(e) {
+            const questionIndex = parseInt(e.target.dataset.question);
+            const optionIndex = parseInt(e.target.dataset.option);
+            
+            // If already answered, don't allow change
+            if (answeredQuestions.has(questionIndex)) return;
+            
+            const question = quizData[questionIndex];
+            const allOptions = document.querySelectorAll(`[data-question="${questionIndex}"]`);
+            const feedback = document.getElementById(`feedback-${questionIndex}`);
+            
+            // Mark as answered
+            answeredQuestions.add(questionIndex);
+            
+            // Disable all options for this question
+            allOptions.forEach(opt => {
+                opt.classList.add('disabled');
+                if (parseInt(opt.dataset.option) === question.correct) {
+                    opt.classList.add('correct');
+                }
+            });
+            
+            // Check if correct
+            const isCorrect = optionIndex === question.correct;
+            
+            if (isCorrect) {
+                score++;
+                e.target.classList.add('correct');
+                feedback.className = 'feedback correct';
+                feedback.innerHTML = `✓ Correct ! ${question.explanation}`;
+            } else {
+                e.target.classList.add('incorrect');
+                feedback.className = 'feedback incorrect';
+                feedback.innerHTML = `✗ Incorrect. ${question.explanation}`;
+            }
+            
+            feedback.classList.remove('hidden');
+            
+            // Mark card as answered
+            e.target.closest('.question-card').classList.add('answered');
+            
+            updateProgress();
+            
+            // Show submit button if all answered
+            if (answeredQuestions.size === quizData.length) {
+                document.getElementById('submitBtn').classList.remove('hidden');
+            }
+        }
+
+        function updateProgress() {
+            const progress = (answeredQuestions.size / quizData.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('currentQuestion').textContent = answeredQuestions.size;
+            document.getElementById('currentScore').textContent = score;
+        }
+
+        function showResults() {
+            document.getElementById('quizContainer').classList.add('hidden');
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.querySelector('.progress-container').classList.add('hidden');
+            
+            const results = document.getElementById('results');
+            const percentage = Math.round((score / quizData.length) * 100);
+            
+            document.getElementById('finalScore').textContent = `${score} / ${quizData.length}`;
+            
+            let message = '';
+            if (percentage === 100) {
+                message = '🎉 Parfait ! Vous maîtrisez parfaitement les concepts des réseaux informatiques !';
+            } else if (percentage >= 80) {
+                message = '🌟 Excellent travail ! Vous avez une très bonne compréhension des réseaux.';
+            } else if (percentage >= 60) {
+                message = '👍 Bien joué ! Vous avez de bonnes bases, continuez ainsi !';
+            } else if (percentage >= 40) {
+                message = '📚 Pas mal, mais il y a encore quelques concepts à revoir.';
+            } else {
+                message = '💪 Continuez à étudier, vous progresserez rapidement !';
+            }
+            
+            document.getElementById('performanceMessage').textContent = message;
+            results.classList.remove('hidden');
+        }
+
+        document.getElementById('submitBtn').addEventListener('click', showResults);
+
+        // Initialize quiz
+        initQuiz();
+    </script>
+</body>
+</html>

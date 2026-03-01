@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cours Python - Les Listes</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .code-editor {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+        .output-console {
+            background: #0d1117;
+            color: #58a6ff;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            min-height: 100px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function PythonListCourse() {
+          const [activeSection, setActiveSection] = useState('intro');
+          const [selectedExercise, setSelectedExercise] = useState(null);
+          const [userCode, setUserCode] = useState('');
+          const [output, setOutput] = useState('');
+
+          const sections = [
+            { id: 'intro',     title: 'Introduction', icon: '📚' },
+            { id: 'indices',   title: 'Indices',       icon: '🔢' },
+            { id: 'methods',   title: 'Méthodes',      icon: '🛠️' },
+            { id: 'parcourir', title: 'Parcourir',     icon: '🔄' },
+            { id: 'qcm',       title: 'QCM',           icon: '❓' },
+            { id: 'exercises', title: 'Exercices',     icon: '💪' },
+          ];
+
+          const exercises = [
+            {
+              id: 1,
+              title: "Compter les mots commençant par 'a'",
+              description: "Écrivez un programme qui compte le nombre de mots commençant par la lettre 'a' (minuscule ou majuscule) dans une liste.",
+              example: '["ananas", "Banane", "abricot", "cerise", "Avocat"] → 3',
+              starter: '# Votre code ici\nmots = ["ananas", "Banane", "abricot", "cerise", "Avocat"]\ncompteur = 0\n\nfor mot in mots:\n    # Complétez le code\n    pass\n\nprint(compteur)',
+              solution: 'mots = ["ananas", "Banane", "abricot", "cerise", "Avocat"]\ncompteur = 0\n\nfor mot in mots:\n    if mot[0].lower() == "a":\n        compteur += 1\n\nprint(compteur)  # Affiche : 3',
+              hint: "Accédez à la première lettre avec mot[0], puis utilisez .lower() pour ignorer la casse."
+            },
+            {
+              id: 2,
+              title: "Compter les nombres divisibles par 5",
+              description: "Écrivez un programme qui compte le nombre de nombres divisibles par 5 dans une liste.",
+              example: "[10, 3, 25, 7, 50, 11, 15] → 4",
+              starter: '# Votre code ici\nnombres = [10, 3, 25, 7, 50, 11, 15]\ncompteur = 0\n\nfor n in nombres:\n    # Complétez le code\n    pass\n\nprint(compteur)',
+              solution: 'nombres = [10, 3, 25, 7, 50, 11, 15]\ncompteur = 0\n\nfor n in nombres:\n    if n % 5 == 0:\n        compteur += 1\n\nprint(compteur)  # Affiche : 4',
+              hint: "Utilisez l'opérateur modulo % : n % 5 == 0 signifie que n est divisible par 5."
+            },
+            {
+              id: 3,
+              title: 'Compter les "pomme" dans une liste',
+              description: 'Écrivez un programme qui compte le nombre de fois que le mot "pomme" apparaît dans une liste.',
+              example: '["pomme", "poire", "pomme", "banane", "pomme"] → 3',
+              starter: '# Votre code ici\nfruits = ["pomme", "poire", "pomme", "banane", "pomme"]\ncompteur = 0\n\nfor fruit in fruits:\n    # Complétez le code\n    pass\n\nprint(compteur)',
+              solution: 'fruits = ["pomme", "poire", "pomme", "banane", "pomme"]\ncompteur = 0\n\nfor fruit in fruits:\n    if fruit == "pomme":\n        compteur += 1\n\nprint(compteur)  # Affiche : 3\n\n# Méthode alternative avec count() :\nprint(fruits.count("pomme"))  # Affiche aussi : 3',
+              hint: 'Comparez chaque élément avec "pomme" en utilisant ==. Vous pouvez aussi utiliser la méthode count().'
+            },
+            {
+              id: 4,
+              title: "Calculer la somme d'une liste",
+              description: "Écrivez un programme qui calcule la somme de tous les nombres d'une liste.",
+              example: "[3, 7, 2, 10, 5] → 27",
+              starter: '# Votre code ici\nnombres = [3, 7, 2, 10, 5]\ntotal = 0\n\nfor n in nombres:\n    # Complétez le code\n    pass\n\nprint(total)',
+              solution: 'nombres = [3, 7, 2, 10, 5]\ntotal = 0\n\nfor n in nombres:\n    total += n\n\nprint(total)  # Affiche : 27',
+              hint: "Accumulez les valeurs dans une variable total avec total += n."
+            },
+            {
+              id: 5,
+              title: "Trouver le maximum sans max()",
+              description: "Écrivez un programme qui trouve la plus grande valeur d'une liste SANS utiliser la fonction max().",
+              example: "[4, 17, 3, 25, 9] → 25",
+              starter: '# Votre code ici\nnombres = [4, 17, 3, 25, 9]\nmaximum = nombres[0]  # On part du premier élément\n\nfor n in nombres:\n    # Complétez le code\n    pass\n\nprint(maximum)',
+              solution: 'nombres = [4, 17, 3, 25, 9]\nmaximum = nombres[0]\n\nfor n in nombres:\n    if n > maximum:\n        maximum = n\n\nprint(maximum)  # Affiche : 25',
+              hint: "Gardez en mémoire la plus grande valeur vue jusqu'ici. Si n > maximum, mettez maximum à jour."
+            },
+            {
+              id: 6,
+              title: "Inverser une liste",
+              description: "Écrivez un programme qui construit une nouvelle liste dans l'ordre inverse, SANS utiliser reverse() ni le slicing.",
+              example: '["a", "b", "c", "d"] → ["d", "c", "b", "a"]',
+              starter: '# Votre code ici\nliste = ["a", "b", "c", "d"]\nresultat = []\n\n# Parcourez la liste dans le bon ordre et utilisez append\n\nprint(resultat)',
+              solution: 'liste = ["a", "b", "c", "d"]\nresultat = []\n\nfor i in range(len(liste) - 1, -1, -1):\n    resultat.append(liste[i])\n\nprint(resultat)  # Affiche : ["d", "c", "b", "a"]',
+              hint: "Utilisez range(len(liste) - 1, -1, -1) pour parcourir les indices de la fin vers le début, puis append()."
+            },
+          ];
+
+          const runCode = () => {
+            try {
+              setOutput("⚠️ Simulation de sortie Python\n\nNote : Ceci est une interface de démonstration.\nPour tester votre code réellement, copiez-le dans un interpréteur Python.\n\n" +
+                       "Code saisi :\n" + userCode);
+            } catch (error) {
+              setOutput("Erreur : " + error.message);
+            }
+          };
+
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-green-900 via-teal-900 to-cyan-900 text-white">
+              <div className="max-w-7xl mx-auto p-4 md:p-8">
+                {/* Header */}
+                <div className="mb-8 text-center">
+                  <h1 className="text-4xl md:text-6xl font-bold mb-3 bg-gradient-to-r from-green-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
+                    🐍 Python - Les Listes
+                  </h1>
+                  <p className="text-xl text-slate-300">Cours interactif avec exercices pratiques</p>
+                </div>
+
+                {/* Navigation */}
+                <div className="flex gap-2 md:gap-4 mb-8 justify-center flex-wrap">
+                  {sections.map((section) => (
+                    <button
+                      key={section.id}
+                      onClick={() => {
+                        setActiveSection(section.id);
+                        setSelectedExercise(null);
+                      }}
+                      className={`px-4 md:px-6 py-3 rounded-xl font-semibold text-sm md:text-base transition-all transform hover:scale-105 ${
+                        activeSection === section.id
+                          ? 'bg-gradient-to-r from-teal-500 to-green-600 shadow-lg shadow-teal-500/50'
+                          : 'bg-slate-800 hover:bg-slate-700'
+                      }`}
+                    >
+                      <span className="mr-2">{section.icon}</span>
+                      {section.title}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Content */}
+                <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-2xl border border-slate-700">
+                  {activeSection === 'intro'     && <IntroSection />}
+                  {activeSection === 'indices'   && <IndicesSection />}
+                  {activeSection === 'methods'   && <MethodsSection />}
+                  {activeSection === 'parcourir' && <ParcourirSection />}
+                  {activeSection === 'qcm'       && <QCMSection />}
+                  {activeSection === 'exercises' && (
+                    <ExercisesSection
+                      exercises={exercises}
+                      selectedExercise={selectedExercise}
+                      setSelectedExercise={setSelectedExercise}
+                      userCode={userCode}
+                      setUserCode={setUserCode}
+                      output={output}
+                      runCode={runCode}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        // ─── INTRO ────────────────────────────────────────────────────────────────
+        function IntroSection() {
+          return (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold text-teal-400 mb-6">📚 Introduction aux Listes</h2>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-teal-500">
+                <h3 className="text-xl font-semibold mb-3 text-teal-300">Qu'est-ce qu'une liste ?</h3>
+                <p className="text-slate-200 leading-relaxed mb-4">
+                  Une <strong>liste</strong> est une collection ordonnée d'éléments. 
+                  Contrairement aux chaînes de caractères, une liste peut contenir des éléments de différents types : 
+                  des nombres, des chaînes, d'autres listes, etc.
+                  En Python, une liste se crée avec des crochets <code className="bg-slate-800 px-2 py-1 rounded">[ ]</code>.
+                </p>
+
+                <div className="code-editor mb-4">
+                  <pre>{`# Créer une liste vide
+ma_liste = []
+
+# Liste de prénoms
+prenoms = ["Alice", "Bob", "Charlie"]
+
+# Liste de nombres
+notes = [15, 12, 18, 9, 14]
+
+# Liste mixte (possible mais rare en pratique)
+mixte = ["Python", 42, True, 3.14]
+
+print(prenoms)   # ['Alice', 'Bob', 'Charlie']
+print(notes)     # [15, 12, 18, 9, 14]`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-teal-900/30 to-green-900/30 rounded-xl p-6 border border-teal-500/30">
+                <h3 className="text-xl font-semibold mb-4 text-teal-300">🎯 Caractéristiques importantes</h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-slate-900/50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-teal-400 mb-2">Ordonnées</h4>
+                    <p className="text-sm text-slate-300">Les éléments conservent leur ordre. Le premier élément est toujours à la position 0.</p>
+                  </div>
+                  <div className="bg-slate-900/50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-teal-400 mb-2">Modifiables</h4>
+                    <p className="text-sm text-slate-300">Contrairement aux chaînes, on peut ajouter, supprimer ou modifier des éléments après création.</p>
+                  </div>
+                  <div className="bg-slate-900/50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-teal-400 mb-2">Indexables</h4>
+                    <p className="text-sm text-slate-300">On accède à chaque élément via son index : <code className="bg-slate-800 px-1 rounded">liste[0]</code></p>
+                  </div>
+                  <div className="bg-slate-900/50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-teal-400 mb-2">Itérables</h4>
+                    <p className="text-sm text-slate-300">On peut parcourir tous les éléments avec une boucle <code className="bg-slate-800 px-1 rounded">for</code>.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6">
+                <h3 className="text-xl font-semibold mb-3 text-green-400">✨ Pourquoi les listes sont-elles utiles ?</h3>
+                <ul className="space-y-2 text-slate-200">
+                  <li className="flex items-start"><span className="text-green-400 mr-2">•</span><span>Stocker une collection de données (noms d'élèves, résultats, produits…)</span></li>
+                  <li className="flex items-start"><span className="text-green-400 mr-2">•</span><span>Effectuer des calculs sur un ensemble de valeurs (moyenne, somme…)</span></li>
+                  <li className="flex items-start"><span className="text-green-400 mr-2">•</span><span>Filtrer ou trier des données facilement</span></li>
+                  <li className="flex items-start"><span className="text-green-400 mr-2">•</span><span>Construire des algorithmes plus complexes (tri, recherche…)</span></li>
+                </ul>
+              </div>
+            </div>
+          );
+        }
+
+        // ─── INDICES ──────────────────────────────────────────────────────────────
+        function IndicesSection() {
+          return (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold text-teal-400 mb-6">🔢 Les Indices (Index)</h2>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-teal-500">
+                <h3 className="text-xl font-semibold mb-4 text-teal-300">Les indices commencent à 0 !</h3>
+                <p className="text-slate-200 mb-4">
+                  En Python (comme dans la plupart des langages), on compte les positions à partir de <strong className="text-yellow-400">0</strong> et non de 1.
+                  Le premier élément est donc à l'indice 0, le deuxième à l'indice 1, etc.
+                </p>
+
+                <div className="bg-slate-800 rounded-xl p-4 mb-4 overflow-x-auto">
+                  <table className="w-full text-center text-sm font-mono">
+                    <thead>
+                      <tr>
+                        <td className="text-slate-400 pb-2">Liste</td>
+                        <td className="text-yellow-400 px-4 pb-2">"pomme"</td>
+                        <td className="text-yellow-400 px-4 pb-2">"banane"</td>
+                        <td className="text-yellow-400 px-4 pb-2">"cerise"</td>
+                        <td className="text-yellow-400 px-4 pb-2">"datte"</td>
+                      </tr>
+                      <tr>
+                        <td className="text-slate-400 pb-1">Indice positif</td>
+                        <td className="text-teal-400 px-4"><span className="bg-teal-900/50 px-3 py-1 rounded">0</span></td>
+                        <td className="text-teal-400 px-4"><span className="bg-teal-900/50 px-3 py-1 rounded">1</span></td>
+                        <td className="text-teal-400 px-4"><span className="bg-teal-900/50 px-3 py-1 rounded">2</span></td>
+                        <td className="text-teal-400 px-4"><span className="bg-teal-900/50 px-3 py-1 rounded">3</span></td>
+                      </tr>
+                      <tr>
+                        <td className="text-slate-400 pt-1">Indice négatif</td>
+                        <td className="text-pink-400 px-4"><span className="bg-pink-900/50 px-3 py-1 rounded">-4</span></td>
+                        <td className="text-pink-400 px-4"><span className="bg-pink-900/50 px-3 py-1 rounded">-3</span></td>
+                        <td className="text-pink-400 px-4"><span className="bg-pink-900/50 px-3 py-1 rounded">-2</span></td>
+                        <td className="text-pink-400 px-4"><span className="bg-pink-900/50 px-3 py-1 rounded">-1</span></td>
+                      </tr>
+                    </thead>
+                  </table>
+                </div>
+
+                <div className="code-editor mb-4">
+                  <pre>{`fruits = ["pomme", "banane", "cerise", "datte"]
+
+# Accès par indice positif
+print(fruits[0])   # pomme   ← premier élément
+print(fruits[1])   # banane
+print(fruits[2])   # cerise
+print(fruits[3])   # datte   ← dernier élément
+
+# Accès par indice négatif (depuis la fin)
+print(fruits[-1])  # datte   ← dernier élément
+print(fruits[-2])  # cerise
+print(fruits[-4])  # pomme`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-green-500">
+                <h3 className="text-xl font-semibold mb-4 text-green-300">Modifier un élément via son indice</h3>
+                <p className="text-slate-200 mb-4">
+                  Contrairement aux chaînes, les listes sont <strong>modifiables</strong> : on peut changer un élément en utilisant son indice.
+                </p>
+                <div className="code-editor">
+                  <pre>{`notes = [12, 15, 9, 18]
+
+print(notes[2])      # 9
+
+# Modifier l'élément à l'indice 2
+notes[2] = 11
+print(notes[2])      # 11
+print(notes)         # [12, 15, 11, 18]`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-purple-500">
+                <h3 className="text-xl font-semibold mb-4 text-purple-300">La fonction len()</h3>
+                <p className="text-slate-200 mb-4">
+                  <code className="bg-slate-800 px-2 py-1 rounded">len(liste)</code> renvoie le <strong>nombre d'éléments</strong> dans la liste.
+                  C'est très utile pour connaître la taille d'une liste ou pour parcourir ses indices.
+                </p>
+                <div className="code-editor mb-4">
+                  <pre>{`fruits = ["pomme", "banane", "cerise", "datte"]
+
+taille = len(fruits)
+print(taille)   # 4
+
+# len() est souvent utilisé pour accéder au dernier élément
+# (sans utiliser les indices négatifs)
+dernier = fruits[len(fruits) - 1]
+print(dernier)  # datte
+
+# Ou avec range() pour parcourir les indices
+for i in range(len(fruits)):
+    print(i, fruits[i])`}</pre>
+                </div>
+                <div className="bg-amber-900/30 rounded-xl p-4 border-l-4 border-amber-500">
+                  <p className="text-amber-200">
+                    ⚠️ <strong>Attention :</strong> si une liste contient 4 éléments, les indices valides sont 
+                    <strong className="text-yellow-400"> 0, 1, 2, 3</strong>. 
+                    Tenter d'accéder à <code className="bg-slate-800 px-1 rounded">liste[4]</code> provoquera une erreur <code className="bg-slate-800 px-1 rounded">IndexError</code>.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-teal-900/30 to-green-900/30 rounded-xl p-6 border border-teal-500/30">
+                <h3 className="text-xl font-semibold mb-3 text-teal-300">💡 À retenir sur les indices</h3>
+                <ul className="space-y-2 text-slate-200">
+                  <li className="flex items-start"><span className="text-teal-400 mr-2">→</span><span>Le premier élément est toujours à l'indice <strong className="text-yellow-400">0</strong>.</span></li>
+                  <li className="flex items-start"><span className="text-teal-400 mr-2">→</span><span>Le dernier élément est à l'indice <strong className="text-yellow-400">len(liste) - 1</strong>, ou simplement <strong className="text-pink-400">-1</strong>.</span></li>
+                  <li className="flex items-start"><span className="text-teal-400 mr-2">→</span><span>Les indices négatifs comptent depuis la fin : <code className="bg-slate-800 px-1 rounded">-1</code> = dernier, <code className="bg-slate-800 px-1 rounded">-2</code> = avant-dernier, etc.</span></li>
+                  <li className="flex items-start"><span className="text-teal-400 mr-2">→</span><span>Un indice hors limite déclenche une <code className="bg-slate-800 px-1 rounded">IndexError</code>.</span></li>
+                </ul>
+              </div>
+            </div>
+          );
+        }
+
+        // ─── METHODS ──────────────────────────────────────────────────────────────
+        function MethodsSection() {
+          return (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold text-teal-400 mb-6">🛠️ Méthodes des Listes</h2>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-teal-500">
+                <h3 className="text-xl font-semibold mb-4 text-teal-300">append() — Ajouter un élément à la fin</h3>
+                <p className="text-slate-200 mb-4">
+                  <code className="bg-slate-800 px-2 py-1 rounded">liste.append(element)</code> ajoute <code className="bg-slate-800 px-2 py-1 rounded">element</code> à la <strong>fin</strong> de la liste.
+                  C'est la méthode la plus utilisée pour construire une liste progressivement.
+                </p>
+                <div className="code-editor mb-4">
+                  <pre>{`courses = []
+
+courses.append("pain")
+print(courses)   # ["pain"]
+
+courses.append("lait")
+print(courses)   # ["pain", "lait"]
+
+courses.append("fromage")
+print(courses)   # ["pain", "lait", "fromage"]
+
+# append() ajoute TOUJOURS à la fin
+courses.append("beurre")
+print(courses)   # ["pain", "lait", "fromage", "beurre"]
+print(len(courses))  # 4`}</pre>
+                </div>
+                <div className="bg-blue-900/30 rounded-xl p-4 border border-blue-500/30">
+                  <p className="text-blue-200 text-sm">
+                    💡 <strong>Astuce :</strong> On commence souvent par créer une liste vide <code className="bg-slate-800 px-1 rounded">resultat = []</code>, 
+                    puis on y ajoute les éléments un par un avec <code className="bg-slate-800 px-1 rounded">append()</code> à l'intérieur d'une boucle.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-purple-500">
+                <h3 className="text-xl font-semibold mb-4 text-purple-300">count() — Compter les occurrences</h3>
+                <p className="text-slate-200 mb-4">
+                  <code className="bg-slate-800 px-2 py-1 rounded">liste.count(valeur)</code> renvoie le nombre de fois que <code className="bg-slate-800 px-2 py-1 rounded">valeur</code> apparaît dans la liste.
+                  C'est pratique pour compter combien de fois on trouve un mot, par exemple <strong>"pomme"</strong>.
+                </p>
+                <div className="code-editor mb-4">
+                  <pre>{`fruits = ["pomme", "banane", "pomme", "cerise", "pomme", "banane"]
+
+# Compter le nombre de fois qu'on trouve "pomme"
+nb_pommes = fruits.count("pomme")
+print(nb_pommes)    # 3
+
+# Compter les "banane"
+nb_bananes = fruits.count("banane")
+print(nb_bananes)   # 2
+
+# Compter un élément absent
+nb_kiwi = fruits.count("kiwi")
+print(nb_kiwi)      # 0`}</pre>
+                </div>
+                <div className="bg-green-900/30 rounded-xl p-4 border border-green-500/30">
+                  <p className="text-green-200 text-sm">
+                    💡 On peut aussi compter manuellement avec une boucle <code className="bg-slate-800 px-1 rounded">for</code> — voir la section "Parcourir".
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-green-500">
+                  <h3 className="text-lg font-semibold mb-3 text-green-300">Ajouter / Supprimer</h3>
+                  <div className="code-editor text-sm">
+                    <pre>{`liste = ["a", "b", "c"]
+
+# insert(indice, valeur)
+liste.insert(1, "x")
+print(liste)  # ["a", "x", "b", "c"]
+
+# remove(valeur) — supprime la 1ère occurrence
+liste.remove("x")
+print(liste)  # ["a", "b", "c"]
+
+# pop() — supprime et renvoie le dernier
+dernier = liste.pop()
+print(dernier)  # "c"
+print(liste)    # ["a", "b"]`}</pre>
+                  </div>
+                </div>
+
+                <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-pink-500">
+                  <h3 className="text-lg font-semibold mb-3 text-pink-300">Trier / Chercher</h3>
+                  <div className="code-editor text-sm">
+                    <pre>{`nombres = [5, 2, 8, 1, 9]
+
+# sort() — trie la liste en place
+nombres.sort()
+print(nombres)  # [1, 2, 5, 8, 9]
+
+# reverse() — inverse l'ordre
+nombres.reverse()
+print(nombres)  # [9, 8, 5, 2, 1]
+
+# in — tester la présence
+print(8 in nombres)   # True
+print(7 in nombres)   # False`}</pre>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-blue-500">
+                <h3 className="text-xl font-semibold mb-4 text-blue-300">Résumé des méthodes essentielles</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-slate-600">
+                        <th className="text-left text-teal-400 pb-2 pr-4">Méthode</th>
+                        <th className="text-left text-teal-400 pb-2 pr-4">Description</th>
+                        <th className="text-left text-teal-400 pb-2">Exemple</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-slate-300 space-y-1">
+                      {[
+                        ["append(x)", "Ajoute x à la fin",             'liste.append("z")'],
+                        ["insert(i, x)", "Insère x à l'indice i",      'liste.insert(0, "a")'],
+                        ["remove(x)", "Supprime la 1ère occurrence de x", 'liste.remove("b")'],
+                        ["pop()",     "Supprime et renvoie le dernier", "liste.pop()"],
+                        ["count(x)",  "Compte les occurrences de x",   'liste.count("pomme")'],
+                        ["sort()",    "Trie la liste",                  "liste.sort()"],
+                        ["reverse()", "Inverse l'ordre",                "liste.reverse()"],
+                        ["len(liste)","Nombre d'éléments",              "len(liste)"],
+                      ].map(([m, d, e]) => (
+                        <tr key={m} className="border-b border-slate-800">
+                          <td className="py-2 pr-4 font-mono text-yellow-300">{m}</td>
+                          <td className="py-2 pr-4">{d}</td>
+                          <td className="py-2 font-mono text-green-400 text-xs">{e}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        // ─── PARCOURIR ────────────────────────────────────────────────────────────
+        function ParcourirSection() {
+          return (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold text-teal-400 mb-6">🔄 Parcourir une Liste</h2>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-teal-500">
+                <h3 className="text-xl font-semibold mb-4 text-teal-300">La boucle <code>for elem in liste</code></h3>
+                <p className="text-slate-200 mb-4">
+                  La façon la plus naturelle de parcourir une liste en Python est d'utiliser 
+                  <code className="bg-slate-800 px-2 py-1 rounded ml-1">for elem in liste:</code>.
+                  À chaque tour de boucle, la variable <code className="bg-slate-800 px-2 py-1 rounded">elem</code> prend la valeur
+                  de l'élément suivant.
+                </p>
+                <div className="code-editor mb-4">
+                  <pre>{`fruits = ["pomme", "banane", "cerise", "datte"]
+
+for fruit in fruits:
+    print(fruit)
+
+# Affiche :
+# pomme
+# banane
+# cerise
+# datte`}</pre>
+                </div>
+                <p className="text-slate-300 text-sm">
+                  Le nom de la variable (<code className="bg-slate-800 px-1 rounded">fruit</code>) est libre : on peut l'appeler comme on veut, 
+                  mais il est conseillé de choisir un nom descriptif.
+                </p>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-purple-500">
+                <h3 className="text-xl font-semibold mb-4 text-purple-300">Compter des éléments avec une boucle</h3>
+                <p className="text-slate-200 mb-4">
+                  On peut utiliser une variable <strong>compteur</strong> initialisée à 0, puis l'incrémenter chaque fois qu'une condition est vérifiée.
+                  C'est le schéma universel pour compter dans une liste.
+                </p>
+                <div className="code-editor mb-4">
+                  <pre>{`fruits = ["pomme", "banane", "pomme", "cerise", "pomme"]
+
+# Compter le nombre de fois qu'on trouve "pomme"
+compteur = 0
+for fruit in fruits:
+    if fruit == "pomme":
+        compteur += 1
+
+print(compteur)  # 3`}</pre>
+                </div>
+                <div className="bg-blue-900/30 rounded-xl p-4 border border-blue-500/30">
+                  <p className="text-blue-200 text-sm">
+                    💡 <strong>Équivalent avec count() :</strong>{" "}
+                    <code className="bg-slate-800 px-1 rounded">fruits.count("pomme")</code> donne le même résultat en une seule ligne !
+                    Mais la boucle est utile quand la condition est plus complexe.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-green-500">
+                <h3 className="text-xl font-semibold mb-4 text-green-300">Exemples de traitements courants</h3>
+                <div className="code-editor">
+                  <pre>{`nombres = [3, 7, 2, 10, 5, 8, 1]
+
+# 1. Calculer la somme
+total = 0
+for n in nombres:
+    total += n
+print(total)   # 36
+
+# 2. Construire une nouvelle liste (éléments > 5)
+grands = []
+for n in nombres:
+    if n > 5:
+        grands.append(n)
+print(grands)  # [7, 10, 8]
+
+# 3. Afficher chaque élément avec son indice
+for i in range(len(nombres)):
+    print(f"Index {i} → {nombres[i]}")`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-yellow-500">
+                <h3 className="text-xl font-semibold mb-4 text-yellow-300">Travailler avec des listes de mots</h3>
+                <div className="code-editor">
+                  <pre>{`mots = ["apple", "abricot", "banane", "avocat", "cerise", "ananas"]
+
+# Compter les mots qui commencent par "a"
+compteur = 0
+for mot in mots:
+    if mot[0] == "a":
+        compteur += 1
+
+print(compteur)   # 4  (apple, abricot, avocat, ananas)
+
+# Afficher uniquement ces mots
+for mot in mots:
+    if mot[0] == "a":
+        print(mot)`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-pink-500">
+                <h3 className="text-xl font-semibold mb-4 text-pink-300">Travailler avec des nombres — divisibilité</h3>
+                <div className="code-editor">
+                  <pre>{`nombres = [10, 3, 25, 7, 50, 11, 15, 4]
+
+# Compter les nombres divisibles par 5
+# Un nombre n est divisible par 5 si n % 5 == 0
+# (% est l'opérateur modulo : il donne le reste de la division)
+
+compteur = 0
+for n in nombres:
+    if n % 5 == 0:
+        compteur += 1
+
+print(compteur)   # 4  (10, 25, 50, 15)
+
+# Rappel : l'opérateur modulo %
+# 10 % 5 = 0   → divisible par 5 ✓
+# 7  % 5 = 2   → pas divisible   ✗
+# 25 % 5 = 0   → divisible par 5 ✓`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-teal-900/30 to-green-900/30 rounded-xl p-6 border border-teal-500/30">
+                <h3 className="text-xl font-semibold mb-3 text-teal-300">💡 Schéma général à retenir</h3>
+                <div className="code-editor">
+                  <pre>{`# Schéma pour compter des éléments dans une liste
+ma_liste = [...]
+
+compteur = 0            # 1. Initialiser le compteur à 0
+
+for elem in ma_liste:   # 2. Parcourir chaque élément
+    if <condition>:     # 3. Vérifier la condition
+        compteur += 1   # 4. Incrémenter si la condition est vraie
+
+print(compteur)         # 5. Afficher le résultat`}</pre>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        // ─── QCM ─────────────────────────────────────────────────────────────────
+        function QCMSection() {
+          const questions = [
+            {
+              id: 1,
+              question: 'Quel est le premier indice d\'une liste en Python ?',
+              options: ['1', '0', '-1', 'Dépend de la taille'],
+              correct: 1,
+              explanation: 'En Python, les indices commencent toujours à 0. Le premier élément est à l\'indice 0.'
+            },
+            {
+              id: 2,
+              question: 'Que renvoie len(["chat", "chien", "poisson"]) ?',
+              options: ['2', '3', '4', '0'],
+              correct: 1,
+              explanation: 'La liste contient 3 éléments : "chat", "chien", "poisson". len() renvoie donc 3.'
+            },
+            {
+              id: 3,
+              question: 'Quelle méthode permet d\'ajouter un élément à la fin d\'une liste ?',
+              options: ['add()', 'append()', 'push()', 'insert()'],
+              correct: 1,
+              explanation: 'append() ajoute un élément à la fin de la liste. insert() permet d\'ajouter à une position précise.'
+            },
+            {
+              id: 4,
+              question: 'Que va afficher ce code ?\nfruits = ["pomme", "banane", "cerise"]\nprint(fruits[-1])',
+              options: ['"pomme"', '"banane"', '"cerise"', 'Une erreur'],
+              correct: 2,
+              explanation: 'L\'indice -1 désigne le dernier élément. Ici fruits[-1] vaut "cerise".'
+            },
+            {
+              id: 5,
+              question: 'Comment compter le nombre de fois que "chat" apparaît dans liste = ["chat", "chien", "chat"] ?',
+              options: ['liste.find("chat")', 'liste.count("chat")', 'len("chat")', 'liste.index("chat")'],
+              correct: 1,
+              explanation: 'count() renvoie le nombre d\'occurrences d\'une valeur dans la liste. Ici liste.count("chat") vaut 2.'
+            },
+            {
+              id: 6,
+              question: 'Quelle condition vérifie qu\'un nombre n est divisible par 5 ?',
+              options: ['n / 5 == 0', 'n % 5 == 0', 'n * 5 == 0', '5 in n'],
+              correct: 1,
+              explanation: 'L\'opérateur modulo % donne le reste de la division. Si n % 5 == 0, alors n est divisible par 5 (reste nul).'
+            },
+            {
+              id: 7,
+              question: 'Avec for elem in ma_liste:, combien de fois la boucle s\'exécute-t-elle ?',
+              options: ['1 fois', 'Autant de fois qu\'il y a d\'éléments', 'len(ma_liste) - 1 fois', 'Indéfiniment'],
+              correct: 1,
+              explanation: 'La boucle for … in liste s\'exécute exactement une fois pour chaque élément de la liste.'
+            },
+            {
+              id: 8,
+              question: 'Que vaut fruits[0] si fruits = ["kiwi", "mangue", "figue"] ?',
+              options: ['"mangue"', '"figue"', '"kiwi"', '3'],
+              correct: 2,
+              explanation: 'L\'indice 0 désigne toujours le premier élément. Ici fruits[0] vaut "kiwi".'
+            },
+          ];
+
+          const [answers, setAnswers] = useState({});
+          const [showResults, setShowResults] = useState(false);
+
+          const handleAnswer = (qId, idx) => {
+            if (!showResults) setAnswers(prev => ({ ...prev, [qId]: idx }));
+          };
+
+          const score = Object.keys(answers).filter(k => {
+            const q = questions.find(q => q.id === parseInt(k));
+            return q && answers[k] === q.correct;
+          }).length;
+
+          return (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold text-teal-400 mb-6">❓ QCM — Testez vos connaissances</h2>
+              <p className="text-slate-300">{questions.length} questions · Sélectionnez la bonne réponse pour chaque question</p>
+
+              {questions.map((q) => (
+                <div key={q.id} className={`bg-slate-900/50 rounded-xl p-6 border-2 transition-all ${
+                  showResults
+                    ? answers[q.id] === q.correct ? 'border-green-500' : 'border-red-500'
+                    : 'border-slate-700'
+                }`}>
+                  <h3 className="text-lg font-semibold mb-4 text-white whitespace-pre-wrap">
+                    {q.id}. {q.question}
+                  </h3>
+                  <div className="grid md:grid-cols-2 gap-3">
+                    {q.options.map((opt, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleAnswer(q.id, idx)}
+                        className={`p-3 rounded-lg text-left text-sm transition-all border-2 ${
+                          showResults
+                            ? idx === q.correct
+                              ? 'bg-green-900/50 border-green-500 text-green-200'
+                              : answers[q.id] === idx
+                              ? 'bg-red-900/50 border-red-500 text-red-200'
+                              : 'bg-slate-800 border-slate-600 text-slate-400'
+                            : answers[q.id] === idx
+                            ? 'bg-teal-900/50 border-teal-500 text-teal-200'
+                            : 'bg-slate-800 border-slate-600 hover:border-teal-500 hover:bg-slate-700'
+                        }`}
+                      >
+                        <span className="font-bold mr-2">{String.fromCharCode(65 + idx)}.</span>
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                  {showResults && (
+                    <div className="mt-4 bg-blue-900/30 rounded-lg p-3 border border-blue-500/30">
+                      <p className="text-blue-200 text-sm">
+                        💡 <strong>Explication :</strong> {q.explanation}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              <div className="text-center">
+                {!showResults ? (
+                  <button
+                    onClick={() => setShowResults(true)}
+                    disabled={Object.keys(answers).length < questions.length}
+                    className="px-8 py-4 bg-gradient-to-r from-teal-600 to-green-600 hover:from-teal-500 hover:to-green-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold text-lg transition-all transform hover:scale-105 shadow-lg"
+                  >
+                    📊 Voir les résultats
+                  </button>
+                ) : (
+                  <div className="space-y-4">
+                    <div className={`text-4xl font-bold ${score >= 6 ? 'text-green-400' : score >= 4 ? 'text-yellow-400' : 'text-red-400'}`}>
+                      {score} / {questions.length}
+                    </div>
+                    <p className="text-slate-300">
+                      {score === questions.length ? '🏆 Parfait !' : score >= 6 ? '👍 Très bien !' : score >= 4 ? '📚 Continuez à réviser !' : '💪 Relisez le cours !'}
+                    </p>
+                    <button
+                      onClick={() => { setAnswers({}); setShowResults(false); }}
+                      className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-xl font-bold text-lg transition-all transform hover:scale-105 shadow-lg"
+                    >
+                      🔄 Recommencer le QCM
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        // ─── EXERCISES ────────────────────────────────────────────────────────────
+        function ExercisesSection({ exercises, selectedExercise, setSelectedExercise, userCode, setUserCode, output, runCode }) {
+          const currentExercise = exercises.find(ex => ex.id === selectedExercise);
+          const [showSolution, setShowSolution] = useState(false);
+          const [showHint, setShowHint] = useState(false);
+
+          if (!selectedExercise) {
+            return (
+              <div className="space-y-6">
+                <h2 className="text-3xl font-bold text-teal-400 mb-6">💪 Exercices Pratiques</h2>
+                <p className="text-slate-300 text-lg mb-6">Choisissez un exercice pour commencer :</p>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {exercises.map((exercise) => (
+                    <div
+                      key={exercise.id}
+                      onClick={() => {
+                        setSelectedExercise(exercise.id);
+                        setUserCode(exercise.starter);
+                        setShowSolution(false);
+                        setShowHint(false);
+                      }}
+                      className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl p-6 border-2 border-slate-700 hover:border-teal-500 cursor-pointer transition-all transform hover:scale-105 hover:shadow-lg hover:shadow-teal-500/20"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <h3 className="text-xl font-bold text-teal-400">Exercice {exercise.id}</h3>
+                        <span className="bg-teal-500/20 text-teal-400 text-xs px-3 py-1 rounded-full">
+                          {exercise.id <= 2 ? 'Facile' : exercise.id <= 4 ? 'Moyen' : 'Difficile'}
+                        </span>
+                      </div>
+                      <h4 className="text-lg font-semibold text-white mb-2">{exercise.title}</h4>
+                      <p className="text-slate-300 text-sm mb-3">{exercise.description}</p>
+                      <div className="bg-slate-900/50 p-3 rounded text-sm">
+                        <span className="text-green-400 font-mono">{exercise.example}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-3xl font-bold text-teal-400">Exercice {currentExercise.id} : {currentExercise.title}</h2>
+                <button
+                  onClick={() => { setSelectedExercise(null); setShowSolution(false); setShowHint(false); }}
+                  className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm"
+                >
+                  ← Retour
+                </button>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-teal-500">
+                <h3 className="text-lg font-semibold mb-2 text-teal-300">📋 Consigne</h3>
+                <p className="text-slate-200 mb-3">{currentExercise.description}</p>
+                <div className="bg-slate-800/50 p-3 rounded">
+                  <p className="text-sm text-slate-400">Exemple :</p>
+                  <p className="text-green-400 font-mono">{currentExercise.example}</p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-4">
+                <button onClick={() => setShowHint(!showHint)} className="px-4 py-3 bg-yellow-600 hover:bg-yellow-500 rounded-lg font-semibold transition-all">
+                  💡 {showHint ? 'Masquer' : 'Afficher'} l'indice
+                </button>
+                <button onClick={() => setShowSolution(!showSolution)} className="px-4 py-3 bg-orange-600 hover:bg-orange-500 rounded-lg font-semibold transition-all">
+                  🔑 {showSolution ? 'Masquer' : 'Voir'} la solution
+                </button>
+                <button onClick={() => setUserCode(currentExercise.starter)} className="px-4 py-3 bg-slate-600 hover:bg-slate-500 rounded-lg font-semibold transition-all">
+                  🔄 Réinitialiser
+                </button>
+              </div>
+
+              {showHint && (
+                <div className="bg-yellow-900/30 rounded-xl p-4 border-l-4 border-yellow-500">
+                  <p className="text-yellow-200">💡 <strong>Indice :</strong> {currentExercise.hint}</p>
+                </div>
+              )}
+
+              {showSolution && (
+                <div className="bg-green-900/30 rounded-xl p-4 border-l-4 border-green-500">
+                  <h4 className="text-green-300 font-semibold mb-2">✅ Solution :</h4>
+                  <div className="code-editor">
+                    <pre>{currentExercise.solution}</pre>
+                  </div>
+                </div>
+              )}
+
+              <div className="bg-slate-900/50 rounded-xl p-6">
+                <h3 className="text-lg font-semibold mb-3 text-white">✏️ Votre code</h3>
+                <textarea
+                  value={userCode}
+                  onChange={(e) => setUserCode(e.target.value)}
+                  className="w-full h-64 bg-slate-800 text-slate-200 font-mono text-sm p-4 rounded-lg border border-slate-600 focus:border-teal-500 focus:outline-none resize-none"
+                  placeholder="Écrivez votre code ici..."
+                  spellCheck="false"
+                />
+                <button
+                  onClick={runCode}
+                  className="mt-4 px-6 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 rounded-lg font-semibold transition-all transform hover:scale-105 shadow-lg"
+                >
+                  ▶️ Exécuter le code
+                </button>
+              </div>
+
+              {output && (
+                <div className="bg-slate-900/50 rounded-xl p-6">
+                  <h3 className="text-lg font-semibold mb-3 text-white">📤 Sortie</h3>
+                  <div className="output-console">{output}</div>
+                </div>
+              )}
+            </div>
+          );
+        }
+
+        ReactDOM.render(<PythonListCourse />, document.getElementById('root'));
+    </script>
+</body>
+</html>
