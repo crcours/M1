@@ -123,17 +123,6 @@
                   {activeSection === 'methods'   && <MethodsSection />}
                   {activeSection === 'parcourir' && <ParcourirSection />}
                   {activeSection === 'qcm'       && <QCMSection />}
-                  {activeSection === 'exercises' && (
-                    <ExercisesSection
-                      exercises={exercises}
-                      selectedExercise={selectedExercise}
-                      setSelectedExercise={setSelectedExercise}
-                      userCode={userCode}
-                      setUserCode={setUserCode}
-                      output={output}
-                      runCode={runCode}
-                    />
-                  )}
                 </div>
               </div>
             </div>
