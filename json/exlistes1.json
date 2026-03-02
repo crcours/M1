@@ -1,203 +1,204 @@
-[
-
-  {
-    "globalInfo:{"exname":"exercices listes python","author":"Corentin Rordorf"
+{
+  "globalInfo": {
+    "serie": "listes1",
+    "author": "Corentin Rordorf"
+  },
+  "exercises": [
+    {
+      "id": 1,
+      "title": "Compter les mots commençant par 'a'",
+      "description": "Écrivez un programme qui compte le nombre de mots commençant par la lettre 'a' (minuscule ou majuscule) dans une liste.",
+      "example": "[\"ananas\", \"Banane\", \"abricot\", \"cerise\", \"Avocat\"] → 3",
+      "difficulty": "easy",
+      "starter": "mots = [\"ananas\", \"Banane\", \"abricot\", \"cerise\", \"Avocat\"]\ncompteur = 0\n\nfor mot in mots:\n    # Complétez le code\n    pass\n\nprint(compteur)",
+      "solution": "mots = [\"ananas\", \"Banane\", \"abricot\", \"cerise\", \"Avocat\"]\ncompteur = 0\n\nfor mot in mots:\n    if mot[0].lower() == \"a\":\n        compteur += 1\n\nprint(compteur)  # Affiche : 3",
+      "hint": "Accédez à la première lettre avec mot[0], puis utilisez .lower() pour ignorer la casse. La condition devient : mot[0].lower() == \"a\"",
+      "expected_output": "3",
+      "tests": [
+        {
+          "label": "Liste de base (ananas, Banane, abricot, cerise, Avocat)",
+          "context": "mots = [\"ananas\", \"Banane\", \"abricot\", \"cerise\", \"Avocat\"]\ncompteur = 0",
+          "expected": "3"
+        },
+        {
+          "label": "Liste différente (alpha, beta, arc, cafe, Arena)",
+          "context": "mots = [\"alpha\", \"beta\", \"arc\", \"cafe\", \"Arena\"]\ncompteur = 0",
+          "expected": "3"
+        },
+        {
+          "label": "Aucun mot en 'a' (soleil, lune, mer)",
+          "context": "mots = [\"soleil\", \"lune\", \"mer\"]\ncompteur = 0",
+          "expected": "0"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Compter les nombres divisibles par 5",
+      "description": "Écrivez un programme qui compte le nombre de nombres divisibles par 5 dans une liste. Un nombre est divisible par 5 si le reste de sa division par 5 est égal à 0.",
+      "example": "[10, 3, 25, 7, 50, 11, 15] → 4",
+      "difficulty": "easy",
+      "starter": "nombres = [10, 3, 25, 7, 50, 11, 15]\ncompteur = 0\n\nfor n in nombres:\n    # Complétez le code\n    pass\n\nprint(compteur)",
+      "solution": "nombres = [10, 3, 25, 7, 50, 11, 15]\ncompteur = 0\n\nfor n in nombres:\n    if n % 5 == 0:\n        compteur += 1\n\nprint(compteur)  # Affiche : 4",
+      "hint": "Utilisez l'opérateur modulo % : n % 5 == 0 signifie que n est divisible par 5 (le reste de la division est 0).",
+      "expected_output": "4",
+      "tests": [
+        {
+          "label": "Liste de base (10, 3, 25, 7, 50, 11, 15)",
+          "context": "nombres = [10, 3, 25, 7, 50, 11, 15]\ncompteur = 0",
+          "expected": "4"
+        },
+        {
+          "label": "Liste différente (5, 7, 15, 3, 100)",
+          "context": "nombres = [5, 7, 15, 3, 100]\ncompteur = 0",
+          "expected": "3"
+        },
+        {
+          "label": "Aucun multiple de 5 (1, 2, 3, 4)",
+          "context": "nombres = [1, 2, 3, 4]\ncompteur = 0",
+          "expected": "0"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Compter les occurrences de 'pomme'",
+      "description": "Écrivez un programme qui compte le nombre de fois que le mot \"pomme\" apparaît dans une liste de fruits.",
+      "example": "[\"pomme\", \"poire\", \"pomme\", \"banane\", \"pomme\"] → 3",
+      "difficulty": "easy",
+      "starter": "fruits = [\"pomme\", \"poire\", \"pomme\", \"banane\", \"pomme\"]\ncompteur = 0\n\nfor fruit in fruits:\n    # Complétez le code\n    pass\n\nprint(compteur)",
+      "solution": "fruits = [\"pomme\", \"poire\", \"pomme\", \"banane\", \"pomme\"]\ncompteur = 0\n\nfor fruit in fruits:\n    if fruit == \"pomme\":\n        compteur += 1\n\nprint(compteur)  # Affiche : 3\n\n# Méthode alternative :\n# print(fruits.count(\"pomme\"))  # Affiche aussi : 3",
+      "hint": "Comparez chaque élément avec \"pomme\" en utilisant ==. Vous pouvez aussi utiliser la méthode count() : fruits.count(\"pomme\").",
+      "expected_output": "3",
+      "tests": [
+        {
+          "label": "Liste de base (pomme × 3)",
+          "context": "fruits = [\"pomme\", \"poire\", \"pomme\", \"banane\", \"pomme\"]\ncompteur = 0",
+          "expected": "3"
+        },
+        {
+          "label": "Deux pommes (pomme, kiwi, pomme, cerise)",
+          "context": "fruits = [\"pomme\", \"kiwi\", \"pomme\", \"cerise\"]\ncompteur = 0",
+          "expected": "2"
+        },
+        {
+          "label": "Aucune pomme (kiwi, mangue, fraise)",
+          "context": "fruits = [\"kiwi\", \"mangue\", \"fraise\"]\ncompteur = 0",
+          "expected": "0"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Calculer la somme d'une liste",
+      "description": "Écrivez un programme qui calcule la somme de tous les nombres d'une liste. Utilisez une variable total initialisée à 0, et ajoutez chaque nombre avec +=.",
+      "example": "[3, 7, 2, 10, 5] → 27",
+      "difficulty": "medium",
+      "starter": "nombres = [3, 7, 2, 10, 5]\ntotal = 0\n\nfor n in nombres:\n    # Complétez le code\n    pass\n\nprint(total)",
+      "solution": "nombres = [3, 7, 2, 10, 5]\ntotal = 0\n\nfor n in nombres:\n    total += n\n\nprint(total)  # Affiche : 27",
+      "hint": "Accumulez les valeurs dans total avec total += n à chaque tour de boucle.",
+      "expected_output": "27",
+      "tests": [
+        {
+          "label": "Liste de base [3, 7, 2, 10, 5]",
+          "context": "nombres = [3, 7, 2, 10, 5]\ntotal = 0",
+          "expected": "27"
+        },
+        {
+          "label": "Liste simple [1, 2, 3, 4]",
+          "context": "nombres = [1, 2, 3, 4]\ntotal = 0",
+          "expected": "10"
+        },
+        {
+          "label": "Liste avec zéro [0, 5, 10, 15]",
+          "context": "nombres = [0, 5, 10, 15]\ntotal = 0",
+          "expected": "30"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Trouver le maximum sans max()",
+      "description": "Écrivez un programme qui trouve la plus grande valeur d'une liste SANS utiliser la fonction max(). Partez du premier élément et mettez à jour votre maximum si vous en trouvez un plus grand.",
+      "example": "[4, 17, 3, 25, 9] → 25",
+      "difficulty": "medium",
+      "starter": "nombres = [4, 17, 3, 25, 9]\nmaximum = nombres[0]  # On part du premier élément\n\nfor n in nombres:\n    # Complétez le code\n    pass\n\nprint(maximum)",
+      "solution": "nombres = [4, 17, 3, 25, 9]\nmaximum = nombres[0]\n\nfor n in nombres:\n    if n > maximum:\n        maximum = n\n\nprint(maximum)  # Affiche : 25",
+      "hint": "Gardez en mémoire la plus grande valeur vue jusqu'ici dans la variable maximum. Si n > maximum, mettez maximum à jour avec maximum = n.",
+      "expected_output": "25",
+      "tests": [
+        {
+          "label": "Liste de base [4, 17, 3, 25, 9]",
+          "context": "nombres = [4, 17, 3, 25, 9]\nmaximum = nombres[0]",
+          "expected": "25"
+        },
+        {
+          "label": "Max en début de liste [100, 1, 50, 2]",
+          "context": "nombres = [100, 1, 50, 2]\nmaximum = nombres[0]",
+          "expected": "100"
+        },
+        {
+          "label": "Max en fin de liste [3, 7, 1, 99]",
+          "context": "nombres = [3, 7, 1, 99]\nmaximum = nombres[0]",
+          "expected": "99"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Inverser une liste",
+      "description": "Écrivez un programme qui construit une nouvelle liste dans l'ordre inverse, SANS utiliser reverse() ni le slicing [::-1]. Parcourez les indices de la fin vers le début avec range().",
+      "example": "[\"a\", \"b\", \"c\", \"d\"] → ['d', 'c', 'b', 'a']",
+      "difficulty": "hard",
+      "starter": "liste = [\"a\", \"b\", \"c\", \"d\"]\nresultat = []\n\n# Parcourez la liste dans le bon ordre et utilisez append\n# Indice : range(len(liste) - 1, -1, -1)\n\nprint(resultat)",
+      "solution": "liste = [\"a\", \"b\", \"c\", \"d\"]\nresultat = []\n\nfor i in range(len(liste) - 1, -1, -1):\n    resultat.append(liste[i])\n\nprint(resultat)  # Affiche : ['d', 'c', 'b', 'a']",
+      "hint": "Utilisez range(len(liste) - 1, -1, -1) pour parcourir les indices de la fin vers le début. À chaque tour, faites resultat.append(liste[i]).",
+      "expected_output": "['d', 'c', 'b', 'a']",
+      "tests": [
+        {
+          "label": "Liste de base [\"a\", \"b\", \"c\", \"d\"]",
+          "context": "liste = [\"a\", \"b\", \"c\", \"d\"]\nresultat = []",
+          "expected": "['d', 'c', 'b', 'a']"
+        },
+        {
+          "label": "Liste de 3 éléments [\"x\", \"y\", \"z\"]",
+          "context": "liste = [\"x\", \"y\", \"z\"]\nresultat = []",
+          "expected": "['z', 'y', 'x']"
+        },
+        {
+          "label": "Liste numérique [1, 2, 3, 4, 5]",
+          "context": "liste = [1, 2, 3, 4, 5]\nresultat = []",
+          "expected": "[5, 4, 3, 2, 1]"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Créer la liste des nombres impairs",
+      "description": "Écrivez un programme qui prend une liste de nombres et construit une nouvelle liste contenant uniquement les nombres impairs. Un nombre est impair si n % 2 != 0.",
+      "example": "[2, 3, 6, 8, 7, 9, 10, 12, 13] → [3, 7, 9, 13]",
+      "difficulty": "hard",
+      "starter": "# Votre code complet ici\nnombres = [2, 3, 6, 8, 7, 9, 10, 12, 13, 15, 17, 24, 13]\nimpairs = []\n\n# Parcourez nombres, ajoutez les impairs dans impairs\n\nprint(impairs)",
+      "solution": "nombres = [2, 3, 6, 8, 7, 9, 10, 12, 13, 15, 17, 24, 13]\nimpairs = []\n\nfor n in nombres:\n    if n % 2 != 0:\n        impairs.append(n)\n\nprint(impairs)  # [3, 7, 9, 13, 15, 17, 13]",
+      "hint": "Un nombre est impair si n % 2 != 0. Utilisez append() pour l'ajouter à la liste impairs. Commencez avec impairs = [] et remplissez-la dans la boucle.",
+      "expected_output": "[3, 7, 9, 13, 15, 17, 13]",
+      "tests": [
+        {
+          "label": "Liste complète [2, 3, 6, 8, 7, 9, 10, 12, 13, 15, 17, 24, 13]",
+          "context": "nombres = [2, 3, 6, 8, 7, 9, 10, 12, 13, 15, 17, 24, 13]\nimpairs = []",
+          "expected": "[3, 7, 9, 13, 15, 17, 13]"
+        },
+        {
+          "label": "Liste simple [1, 2, 3, 4, 5]",
+          "context": "nombres = [1, 2, 3, 4, 5]\nimpairs = []",
+          "expected": "[1, 3, 5]"
+        },
+        {
+          "label": "Que des pairs [2, 4, 6, 8]",
+          "context": "nombres = [2, 4, 6, 8]\nimpairs = []",
+          "expected": "[]"
+        }
+      ]
     }
-  }
-  {
-    "id": 1,
-    "title": "Compter les mots commençant par 'a'",
-    "description": "Écrivez un programme qui compte le nombre de mots commençant par la lettre 'a' (minuscule ou majuscule) dans une liste.",
-    "example": "[\"ananas\", \"Banane\", \"abricot\", \"cerise\", \"Avocat\"] → 3",
-    "difficulty": "easy",
-    "starter": "mots = [\"ananas\", \"Banane\", \"abricot\", \"cerise\", \"Avocat\"]\ncompteur = 0\n\nfor mot in mots:\n    # Complétez le code\n    pass\n\nprint(compteur)",
-    "solution": "mots = [\"ananas\", \"Banane\", \"abricot\", \"cerise\", \"Avocat\"]\ncompteur = 0\n\nfor mot in mots:\n    if mot[0].lower() == \"a\":\n        compteur += 1\n\nprint(compteur)  # Affiche : 3",
-    "hint": "Accédez à la première lettre avec mot[0], puis utilisez .lower() pour ignorer la casse. La condition devient : mot[0].lower() == \"a\"",
-    "expected_output": "3",
-    "tests": [
-      {
-        "label": "Liste de base (ananas, Banane, abricot, cerise, Avocat)",
-        "context": "mots = [\"ananas\", \"Banane\", \"abricot\", \"cerise\", \"Avocat\"]\ncompteur = 0",
-        "expected": "3"
-      },
-      {
-        "label": "Liste différente (alpha, beta, arc, cafe, Arena)",
-        "context": "mots = [\"alpha\", \"beta\", \"arc\", \"cafe\", \"Arena\"]\ncompteur = 0",
-        "expected": "3"
-      },
-      {
-        "label": "Aucun mot en 'a' (soleil, lune, mer)",
-        "context": "mots = [\"soleil\", \"lune\", \"mer\"]\ncompteur = 0",
-        "expected": "0"
-      }
-    ]
-  },
-  {
-    "id": 2,
-    "title": "Compter les nombres divisibles par 5",
-    "description": "Écrivez un programme qui compte le nombre de nombres divisibles par 5 dans une liste. Un nombre est divisible par 5 si le reste de sa division par 5 est égal à 0.",
-    "example": "[10, 3, 25, 7, 50, 11, 15] → 4",
-    "difficulty": "easy",
-    "starter": "nombres = [10, 3, 25, 7, 50, 11, 15]\ncompteur = 0\n\nfor n in nombres:\n    # Complétez le code\n    pass\n\nprint(compteur)",
-    "solution": "nombres = [10, 3, 25, 7, 50, 11, 15]\ncompteur = 0\n\nfor n in nombres:\n    if n % 5 == 0:\n        compteur += 1\n\nprint(compteur)  # Affiche : 4",
-    "hint": "Utilisez l'opérateur modulo % : n % 5 == 0 signifie que n est divisible par 5 (le reste de la division est 0).",
-    "expected_output": "4",
-    "tests": [
-      {
-        "label": "Liste de base (10, 3, 25, 7, 50, 11, 15)",
-        "context": "nombres = [10, 3, 25, 7, 50, 11, 15]\ncompteur = 0",
-        "expected": "4"
-      },
-      {
-        "label": "Liste différente (5, 7, 15, 3, 100)",
-        "context": "nombres = [5, 7, 15, 3, 100]\ncompteur = 0",
-        "expected": "3"
-      },
-      {
-        "label": "Aucun multiple de 5 (1, 2, 3, 4)",
-        "context": "nombres = [1, 2, 3, 4]\ncompteur = 0",
-        "expected": "0"
-      }
-    ]
-  },
-  {
-    "id": 3,
-    "title": "Compter les occurrences de 'pomme'",
-    "description": "Écrivez un programme qui compte le nombre de fois que le mot \"pomme\" apparaît dans une liste de fruits.",
-    "example": "[\"pomme\", \"poire\", \"pomme\", \"banane\", \"pomme\"] → 3",
-    "difficulty": "easy",
-    "starter": "fruits = [\"pomme\", \"poire\", \"pomme\", \"banane\", \"pomme\"]\ncompteur = 0\n\nfor fruit in fruits:\n    # Complétez le code\n    pass\n\nprint(compteur)",
-    "solution": "fruits = [\"pomme\", \"poire\", \"pomme\", \"banane\", \"pomme\"]\ncompteur = 0\n\nfor fruit in fruits:\n    if fruit == \"pomme\":\n        compteur += 1\n\nprint(compteur)  # Affiche : 3\n\n# Méthode alternative :\n# print(fruits.count(\"pomme\"))  # Affiche aussi : 3",
-    "hint": "Comparez chaque élément avec \"pomme\" en utilisant ==. Vous pouvez aussi utiliser la méthode count() : fruits.count(\"pomme\").",
-    "expected_output": "3",
-    "tests": [
-      {
-        "label": "Liste de base (pomme × 3)",
-        "context": "fruits = [\"pomme\", \"poire\", \"pomme\", \"banane\", \"pomme\"]\ncompteur = 0",
-        "expected": "3"
-      },
-      {
-        "label": "Deux pommes (pomme, kiwi, pomme, cerise)",
-        "context": "fruits = [\"pomme\", \"kiwi\", \"pomme\", \"cerise\"]\ncompteur = 0",
-        "expected": "2"
-      },
-      {
-        "label": "Aucune pomme (kiwi, mangue, fraise)",
-        "context": "fruits = [\"kiwi\", \"mangue\", \"fraise\"]\ncompteur = 0",
-        "expected": "0"
-      }
-    ]
-  },
-  {
-    "id": 4,
-    "title": "Calculer la somme d'une liste",
-    "description": "Écrivez un programme qui calcule la somme de tous les nombres d'une liste. Utilisez une variable total initialisée à 0, et ajoutez chaque nombre avec +=.",
-    "example": "[3, 7, 2, 10, 5] → 27",
-    "difficulty": "medium",
-    "starter": "nombres = [3, 7, 2, 10, 5]\ntotal = 0\n\nfor n in nombres:\n    # Complétez le code\n    pass\n\nprint(total)",
-    "solution": "nombres = [3, 7, 2, 10, 5]\ntotal = 0\n\nfor n in nombres:\n    total += n\n\nprint(total)  # Affiche : 27",
-    "hint": "Accumulez les valeurs dans total avec total += n à chaque tour de boucle.",
-    "expected_output": "27",
-    "tests": [
-      {
-        "label": "Liste de base [3, 7, 2, 10, 5]",
-        "context": "nombres = [3, 7, 2, 10, 5]\ntotal = 0",
-        "expected": "27"
-      },
-      {
-        "label": "Liste simple [1, 2, 3, 4]",
-        "context": "nombres = [1, 2, 3, 4]\ntotal = 0",
-        "expected": "10"
-      },
-      {
-        "label": "Liste avec zéro [0, 5, 10, 15]",
-        "context": "nombres = [0, 5, 10, 15]\ntotal = 0",
-        "expected": "30"
-      }
-    ]
-  },
-  {
-    "id": 5,
-    "title": "Trouver le maximum sans max()",
-    "description": "Écrivez un programme qui trouve la plus grande valeur d'une liste SANS utiliser la fonction max(). Partez du premier élément et mettez à jour votre maximum si vous en trouvez un plus grand.",
-    "example": "[4, 17, 3, 25, 9] → 25",
-    "difficulty": "medium",
-    "starter": "nombres = [4, 17, 3, 25, 9]\nmaximum = nombres[0]  # On part du premier élément\n\nfor n in nombres:\n    # Complétez le code\n    pass\n\nprint(maximum)",
-    "solution": "nombres = [4, 17, 3, 25, 9]\nmaximum = nombres[0]\n\nfor n in nombres:\n    if n > maximum:\n        maximum = n\n\nprint(maximum)  # Affiche : 25",
-    "hint": "Gardez en mémoire la plus grande valeur vue jusqu'ici dans la variable maximum. Si n > maximum, mettez maximum à jour avec maximum = n.",
-    "expected_output": "25",
-    "tests": [
-      {
-        "label": "Liste de base [4, 17, 3, 25, 9]",
-        "context": "nombres = [4, 17, 3, 25, 9]\nmaximum = nombres[0]",
-        "expected": "25"
-      },
-      {
-        "label": "Max en début de liste [100, 1, 50, 2]",
-        "context": "nombres = [100, 1, 50, 2]\nmaximum = nombres[0]",
-        "expected": "100"
-      },
-      {
-        "label": "Max en fin de liste [3, 7, 1, 99]",
-        "context": "nombres = [3, 7, 1, 99]\nmaximum = nombres[0]",
-        "expected": "99"
-      }
-    ]
-  },
-  {
-    "id": 6,
-    "title": "Inverser une liste",
-    "description": "Écrivez un programme qui construit une nouvelle liste dans l'ordre inverse, SANS utiliser reverse() ni le slicing [::-1]. Parcourez les indices de la fin vers le début avec range().",
-    "example": "[\"a\", \"b\", \"c\", \"d\"] → ['d', 'c', 'b', 'a']",
-    "difficulty": "hard",
-    "starter": "liste = [\"a\", \"b\", \"c\", \"d\"]\nresultat = []\n\n# Parcourez la liste dans le bon ordre et utilisez append\n# Indice : range(len(liste) - 1, -1, -1)\n\nprint(resultat)",
-    "solution": "liste = [\"a\", \"b\", \"c\", \"d\"]\nresultat = []\n\nfor i in range(len(liste) - 1, -1, -1):\n    resultat.append(liste[i])\n\nprint(resultat)  # Affiche : ['d', 'c', 'b', 'a']",
-    "hint": "Utilisez range(len(liste) - 1, -1, -1) pour parcourir les indices de la fin vers le début. À chaque tour, faites resultat.append(liste[i]).",
-    "expected_output": "['d', 'c', 'b', 'a']",
-    "tests": [
-      {
-        "label": "Liste de base [\"a\", \"b\", \"c\", \"d\"]",
-        "context": "liste = [\"a\", \"b\", \"c\", \"d\"]\nresultat = []",
-        "expected": "['d', 'c', 'b', 'a']"
-      },
-      {
-        "label": "Liste de 3 éléments [\"x\", \"y\", \"z\"]",
-        "context": "liste = [\"x\", \"y\", \"z\"]\nresultat = []",
-        "expected": "['z', 'y', 'x']"
-      },
-      {
-        "label": "Liste numérique [1, 2, 3, 4, 5]",
-        "context": "liste = [1, 2, 3, 4, 5]\nresultat = []",
-        "expected": "[5, 4, 3, 2, 1]"
-      }
-    ]
-  },
-  {
-    "id": 7,
-    "title": "Créer la liste des nombres impairs",
-    "description": "Écrivez un programme qui prend une liste de nombres et construit une nouvelle liste contenant uniquement les nombres impairs. Un nombre est impair si n % 2 != 0.",
-    "example": "[2, 3, 6, 8, 7, 9, 10, 12, 13] → [3, 7, 9, 13]",
-    "difficulty": "hard",
-    "starter": "# Votre code complet ici\nnombres = [2, 3, 6, 8, 7, 9, 10, 12, 13, 15, 17, 24, 13]\nimpairs = []\n\n# Parcourez nombres, ajoutez les impairs dans impairs\n\nprint(impairs)",
-    "solution": "nombres = [2, 3, 6, 8, 7, 9, 10, 12, 13, 15, 17, 24, 13]\nimpairs = []\n\nfor n in nombres:\n    if n % 2 != 0:\n        impairs.append(n)\n\nprint(impairs)  # [3, 7, 9, 13, 15, 17, 13]",
-    "hint": "Un nombre est impair si n % 2 != 0. Utilisez append() pour l'ajouter à la liste impairs. Commencez avec impairs = [] et remplissez-la dans la boucle.",
-    "expected_output": "[3, 7, 9, 13, 15, 17, 13]",
-    "tests": [
-      {
-        "label": "Liste complète [2, 3, 6, 8, 7, 9, 10, 12, 13, 15, 17, 24, 13]",
-        "context": "nombres = [2, 3, 6, 8, 7, 9, 10, 12, 13, 15, 17, 24, 13]\nimpairs = []",
-        "expected": "[3, 7, 9, 13, 15, 17, 13]"
-      },
-      {
-        "label": "Liste simple [1, 2, 3, 4, 5]",
-        "context": "nombres = [1, 2, 3, 4, 5]\nimpairs = []",
-        "expected": "[1, 3, 5]"
-      },
-      {
-        "label": "Que des pairs [2, 4, 6, 8]",
-        "context": "nombres = [2, 4, 6, 8]\nimpairs = []",
-        "expected": "[]"
-      }
-    ]
-  }
-]
+  ]
+}
