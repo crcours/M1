@@ -43,8 +43,6 @@
 
         function PythonListCourse() {
           const [activeSection, setActiveSection] = useState('intro');
-          const [selectedExercise, setSelectedExercise] = useState(null);
-          const [userCode, setUserCode] = useState('');
           const [output, setOutput] = useState('');
 
           const sections = [
@@ -57,15 +55,7 @@
           ];
 
         
-          const runCode = () => {
-            try {
-              setOutput("⚠️ Simulation de sortie Python\n\nNote : Ceci est une interface de démonstration.\nPour tester votre code réellement, copiez-le dans un interpréteur Python.\n\n" +
-                       "Code saisi :\n" + userCode);
-            } catch (error) {
-              setOutput("Erreur : " + error.message);
-            }
-          };
-
+ 
           return (
             <div className="min-h-screen bg-gradient-to-br from-green-900 via-teal-900 to-cyan-900 text-white">
               <div className="max-w-7xl mx-auto p-4 md:p-8">
