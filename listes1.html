@@ -113,12 +113,12 @@
             },
                {
               id: 7,
-              title: "Créer la liste des nombre paires",
-              description: "Écrivez un programme qui prends une liste de nombres et contruit une nouvelle liste uniquement avec les nombres impairs.",
+              title: "Créer la liste des nombres impairs",
+              description: "Écrivez un programme qui prend une liste de nombres et construit une nouvelle liste uniquement avec les nombres impairs.",
               example: '[2,3,6,8,7,9,10,12,13,15,17,24,13] → [3,7,9,13,15,17,13]',
-              starter: '',
-              solution: '',
-              hint: "Si un nombre est impair alors n%2!==0 vaut True"
+              starter: '# Votre code ici\nnombres = [2,3,6,8,7,9,10,12,13,15,17,24,13]\nimpairs = []\n\nfor n in nombres:\n    # Complétez le code\n    pass\n\nprint(impairs)',
+              solution: 'nombres = [2,3,6,8,7,9,10,12,13,15,17,24,13]\nimpairs = []\n\nfor n in nombres:\n    if n % 2 != 0:\n        impairs.append(n)\n\nprint(impairs)  # [3, 7, 9, 13, 15, 17, 13]',
+              hint: "Si un nombre est impair alors n % 2 != 0 vaut True. Utilisez append() pour l'ajouter à la nouvelle liste."
             }
           ];
 
