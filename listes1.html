@@ -43,7 +43,7 @@
 
         function PythonListCourse() {
           const [activeSection, setActiveSection] = useState('intro');
-          const [output, setOutput] = useState('');
+      
 
           const sections = [
             { id: 'intro',     title: 'Introduction', icon: '📚' },
@@ -86,7 +86,6 @@
       key={section.id}
       onClick={() => {
         setActiveSection(section.id);
-        setSelectedExercise(null);
       }}
       className={`px-4 md:px-6 py-3 rounded-xl font-semibold text-sm md:text-base transition-all transform hover:scale-105 ${
         activeSection === section.id
