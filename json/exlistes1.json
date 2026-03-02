@@ -1,4 +1,9 @@
 [
+
+  {
+    "globalInfo:{"exname":"exercices listes python","author":"Corentin Rordorf"
+    }
+  }
   {
     "id": 1,
     "title": "Compter les mots commençant par 'a'",
