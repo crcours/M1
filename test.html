@@ -791,30 +791,19 @@ const DEFAULT_JSON = null;
 // const DEFAULT_JSON = "https://exemple.com/mes-exercices.json";
 
 /* ═══════════════════════════════════════════════════════════════
-   ⚙️  NEON — Connection string (HTTP SQL API)
+   ⚙️  NEON — Connection string
 ═══════════════════════════════════════════════════════════════ */
 const NEON_CONNECTION = "postgresql://eleve_user:B123%2B%26%2F%25%2A%C3%A9%C3%A9@ep-blue-bird-alox500p-pooler.c-3.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
-// Extrait le host et construit l'URL HTTP API Neon
-const _neonUrl = (() => {
-  try {
-    const u = new URL(NEON_CONNECTION.replace('postgresql://', 'https://'));
-    return `https://${u.host}/sql`;
-  } catch { return null; }
-})();
-const _neonAuth = (() => {
-  try {
-    const u = new URL(NEON_CONNECTION.replace('postgresql://', 'https://'));
-    return 'Basic ' + btoa(`${decodeURIComponent(u.username)}:${decodeURIComponent(u.password)}`);
-  } catch { return null; }
-})();
-async function neonQuery(sql, params = []) {
-  const resp = await fetch(_neonUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': _neonAuth, 'Neon-Connection-String': NEON_CONNECTION },
-    body: JSON.stringify({ query: sql, params })
-  });
-  if (!resp.ok) throw new Error(`Neon error ${resp.status}: ${await resp.text()}`);
-  return resp.json();
+let _neonSql = null;
+async function getNeonSql() {
+  if (_neonSql) return _neonSql;
+  const { neon } = await import('https://esm.sh/@neondatabase/serverless@1');
+  _neonSql = neon(NEON_CONNECTION);
+  return _neonSql;
+}
+async function neonQuery(query, params = []) {
+  const sql = await getNeonSql();
+  return sql.query(query, params);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1301,15 +1290,15 @@ async function showNeonLoadModal() {
   try {
     const res = await neonQuery(`SELECT id, data->>'eleve' as nom, created_at FROM reponses ORDER BY created_at DESC`);
     sel.innerHTML = '<option value="">— choisir un élève —</option>';
-    (res.rows || []).forEach(row => {
+    (res || []).forEach(row => {
       const opt = document.createElement('option');
-      opt.value = row[0]; // id
-      const nom = row[1] || '(sans nom)';
-      const date = new Date(row[2]).toLocaleString('fr-FR');
+      opt.value = row.id;
+      const nom = row.nom || '(sans nom)';
+      const date = new Date(row.created_at).toLocaleString('fr-FR');
       opt.textContent = `${nom} — ${date}`;
       sel.appendChild(opt);
     });
-    if (!res.rows?.length) { msg.className = 'neon-msg'; msg.textContent = 'Aucune sauvegarde trouvée.'; }
+    if (!res?.length) { msg.className = 'neon-msg'; msg.textContent = 'Aucune sauvegarde trouvée.'; }
   } catch(e) {
     msg.className = 'neon-msg err'; msg.textContent = '❌ ' + e.message;
   }
@@ -1324,7 +1313,7 @@ async function doNeonLoad() {
   msg.className = 'neon-msg'; msg.textContent = '⏳ Chargement…';
   try {
     const res = await neonQuery(`SELECT data FROM reponses WHERE id = $1`, [id]);
-    const data = res.rows?.[0]?.[0];
+    const data = res?.[0]?.data;
     if (!data) throw new Error('Introuvable.');
     if (!Array.isArray(data.exercises)) throw new Error('Format invalide.');
     rawData = data;
