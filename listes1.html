@@ -251,32 +251,97 @@ print(notes)         # [12, 15, 11, 18]`}</pre>
                 </div>
               </div>
 
-              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-purple-500">
-                <h3 className="text-xl font-semibold mb-4 text-purple-300">La fonction len()</h3>
-                <p className="text-slate-200 mb-4">
-                  <code className="bg-slate-800 px-2 py-1 rounded">len(liste)</code> renvoie le <strong>nombre d'éléments</strong> dans la liste.
-                  C'est très utile pour connaître la taille d'une liste ou pour parcourir ses indices.
+              <div className="bg-amber-900/30 rounded-xl p-4 border-l-4 border-amber-500">
+                <p className="text-amber-200">
+                  ⚠️ <strong>Attention :</strong> si une liste contient 4 éléments, les indices valides sont 
+                  <strong className="text-yellow-400"> 0, 1, 2, 3</strong>. 
+                  Tenter d'accéder à <code className="bg-slate-800 px-1 rounded">liste[4]</code> provoquera une erreur <code className="bg-slate-800 px-1 rounded">IndexError</code>.
                 </p>
-                <div className="code-editor mb-4">
-                  <pre>{`fruits = ["pomme", "banane", "cerise", "datte"]
+              </div>
 
-taille = len(fruits)
-print(taille)   # 4
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-cyan-500">
+                <h3 className="text-xl font-semibold mb-4 text-cyan-300">✂️ Les Slices (tranches)</h3>
+                <p className="text-slate-200 mb-4">
+                  Un <strong>slice</strong> permet d'extraire une <strong>portion</strong> d'une liste en précisant un début et une fin : 
+                  <code className="bg-slate-800 px-2 py-1 rounded ml-1">liste[debut:fin]</code>. 
+                  L'élément à l'indice <code className="bg-slate-800 px-1 rounded">fin</code> est <strong className="text-yellow-400">exclu</strong>.
+                </p>
 
-# len() est souvent utilisé pour accéder au dernier élément
-# (sans utiliser les indices négatifs)
-dernier = fruits[len(fruits) - 1]
-print(dernier)  # datte
-
-# Ou avec range() pour parcourir les indices
-for i in range(len(fruits)):
-    print(i, fruits[i])`}</pre>
+                <div className="bg-slate-800 rounded-xl p-4 mb-4 overflow-x-auto">
+                  <table className="w-full text-center text-sm font-mono">
+                    <thead>
+                      <tr>
+                        <td className="text-slate-400 pb-2">Liste</td>
+                        <td className="text-yellow-400 px-3 pb-2">"pomme"</td>
+                        <td className="text-yellow-400 px-3 pb-2">"banane"</td>
+                        <td className="text-yellow-400 px-3 pb-2">"cerise"</td>
+                        <td className="text-yellow-400 px-3 pb-2">"datte"</td>
+                        <td className="text-yellow-400 px-3 pb-2">"figue"</td>
+                      </tr>
+                      <tr>
+                        <td className="text-slate-400">Indice</td>
+                        <td className="text-teal-400 px-3"><span className="bg-teal-900/50 px-2 py-1 rounded">0</span></td>
+                        <td className="text-teal-400 px-3"><span className="bg-teal-900/50 px-2 py-1 rounded">1</span></td>
+                        <td className="text-teal-400 px-3"><span className="bg-teal-900/50 px-2 py-1 rounded">2</span></td>
+                        <td className="text-teal-400 px-3"><span className="bg-teal-900/50 px-2 py-1 rounded">3</span></td>
+                        <td className="text-teal-400 px-3"><span className="bg-teal-900/50 px-2 py-1 rounded">4</span></td>
+                      </tr>
+                    </thead>
+                  </table>
                 </div>
-                <div className="bg-amber-900/30 rounded-xl p-4 border-l-4 border-amber-500">
-                  <p className="text-amber-200">
-                    ⚠️ <strong>Attention :</strong> si une liste contient 4 éléments, les indices valides sont 
-                    <strong className="text-yellow-400"> 0, 1, 2, 3</strong>. 
-                    Tenter d'accéder à <code className="bg-slate-800 px-1 rounded">liste[4]</code> provoquera une erreur <code className="bg-slate-800 px-1 rounded">IndexError</code>.
+
+                <div className="code-editor mb-4">
+                  <pre>{`fruits = ["pomme", "banane", "cerise", "datte", "figue"]
+
+# liste[debut:fin]  →  du début (inclus) jusqu'à fin (exclu)
+print(fruits[0:3])   # ["pomme", "banane", "cerise"]
+print(fruits[1:4])   # ["banane", "cerise", "datte"]
+
+# Omettre le début → part de l'indice 0
+print(fruits[:3])    # ["pomme", "banane", "cerise"]
+
+# Omettre la fin et le pas → va jusqu'au dernier élément, pas de 1
+print(fruits[2:])    # ["cerise", "datte", "figue"]
+print(fruits[2::])   # ["cerise", "datte", "figue"]  ← identique (les deux omettent fin et pas)
+
+# Les deux omis → copie toute la liste
+print(fruits[:])     # ["pomme", "banane", "cerise", "datte", "figue"]
+
+# Indices négatifs dans un slice
+print(fruits[-3:])   # ["cerise", "datte", "figue"]  ← 3 derniers
+print(fruits[:-1])   # ["pomme", "banane", "cerise", "datte"]  ← tout sauf dernier
+
+# Avec un pas : liste[debut:fin:pas]
+print(fruits[::2])   # ["pomme", "cerise", "figue"]  ← un élément sur deux
+print(fruits[::-1])  # ["figue", "datte", "cerise", "banane", "pomme"]  ← inversé`}</pre>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4 mb-4">
+                  <div className="bg-slate-800/70 rounded-lg p-4">
+                    <h4 className="font-semibold text-cyan-400 mb-2">Syntaxe complète</h4>
+                    <code className="text-yellow-300 text-sm">liste[debut : fin : pas]</code>
+                    <ul className="text-slate-300 text-sm mt-2 space-y-1">
+                      <li><span className="text-teal-400">debut</span> — indice de départ (inclus, défaut : 0)</li>
+                      <li><span className="text-teal-400">fin</span> — indice de fin (<strong>exclu</strong>, défaut : fin)</li>
+                      <li><span className="text-teal-400">pas</span> — saut entre chaque élément (défaut : 1)</li>
+                    </ul>
+                  </div>
+                  <div className="bg-slate-800/70 rounded-lg p-4">
+                    <h4 className="font-semibold text-cyan-400 mb-2">Exemples rapides</h4>
+                    <ul className="text-slate-300 text-sm space-y-1 font-mono">
+                      <li><span className="text-green-400">liste[:3]</span> → 3 premiers</li>
+                      <li><span className="text-green-400">liste[2:]</span> → à partir du 3ᵉ</li>
+                      <li><span className="text-green-400">liste[-2:]</span> → 2 derniers</li>
+                      <li><span className="text-green-400">liste[::2]</span> → indices pairs</li>
+                      <li><span className="text-green-400">liste[::-1]</span> → liste inversée</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="bg-blue-900/30 rounded-xl p-4 border border-blue-500/30">
+                  <p className="text-blue-200 text-sm">
+                    💡 <strong>À noter :</strong> un slice renvoie toujours une <strong>nouvelle liste</strong>. 
+                    La liste d'origine n'est pas modifiée. Si l'indice de fin dépasse la taille, Python ne génère pas d'erreur — il s'arrête simplement à la fin.
                   </p>
                 </div>
               </div>
@@ -397,6 +462,28 @@ print(nombres)  # [9, 8, 5, 2, 1]
 print(8 in nombres)   # True
 print(7 in nombres)   # False`}</pre>
                   </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-purple-500">
+                <h3 className="text-xl font-semibold mb-4 text-purple-300">len() — Nombre d'éléments</h3>
+                <p className="text-slate-200 mb-4">
+                  <code className="bg-slate-800 px-2 py-1 rounded">len(liste)</code> renvoie le <strong>nombre d'éléments</strong> dans la liste.
+                  C'est très utile pour connaître la taille d'une liste ou pour parcourir ses indices avec <code className="bg-slate-800 px-1 rounded">range()</code>.
+                </p>
+                <div className="code-editor mb-4">
+                  <pre>{`fruits = ["pomme", "banane", "cerise", "datte"]
+
+taille = len(fruits)
+print(taille)   # 4
+
+# len() pour accéder au dernier élément (sans indice négatif)
+dernier = fruits[len(fruits) - 1]
+print(dernier)  # datte
+
+# Ou avec range() pour parcourir les indices
+for i in range(len(fruits)):
+    print(i, fruits[i])`}</pre>
                 </div>
               </div>
 
@@ -639,6 +726,20 @@ print(compteur)         # 5. Afficher le résultat`}</pre>
               correct: 2,
               explanation: 'L\'indice 0 désigne toujours le premier élément. Ici fruits[0] vaut "kiwi".'
             },
+            {
+              id: 9,
+              question: 'Que renvoie liste[1:3] si liste = ["a", "b", "c", "d", "e"] ?',
+              options: ['["a", "b", "c"]', '["b", "c"]', '["b", "c", "d"]', '["a", "b"]'],
+              correct: 1,
+              explanation: 'liste[1:3] retourne les éléments aux indices 1 et 2 (la fin est exclue). On obtient donc ["b", "c"].'
+            },
+            {
+              id: 10,
+              question: 'Que renvoie liste[2:] si liste = ["x", "y", "z", "w"] ?',
+              options: ['["x", "y"]', '["z"]', '["z", "w"]', '["y", "z", "w"]'],
+              correct: 2,
+              explanation: 'liste[2:] renvoie tous les éléments à partir de l\'indice 2 jusqu\'à la fin, soit ["z", "w"].'
+            },
           ];
 
           const [answers, setAnswers] = useState({});
@@ -714,7 +815,7 @@ print(compteur)         # 5. Afficher le résultat`}</pre>
                       {score} / {questions.length}
                     </div>
                     <p className="text-slate-300">
-                      {score === questions.length ? '🏆 Parfait !' : score >= 6 ? '👍 Très bien !' : score >= 4 ? '📚 Continuez à réviser !' : '💪 Relisez le cours !'}
+                      {score === questions.length ? '🏆 Parfait !' : score >= 8 ? '👍 Très bien !' : score >= 6 ? '📚 Continuez à réviser !' : '💪 Relisez le cours !'}
                     </p>
                     <button
                       onClick={() => { setAnswers({}); setShowResults(false); }}
