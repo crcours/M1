@@ -688,7 +688,7 @@ for i in range(len(chaine) - 1, -1, -1):
                       <button
                         key={idx}
                         onClick={() => handleAnswer(q.id, idx)}
-                        className={`p-3 rounded-lg text-left text-sm transition-all border-2 ${
+                        className={`p-3 rounded-lg text-left text-sm transition-all border-2 whitespace-pre-wrap ${
                           showResults
                             ? idx === q.correct
                               ? 'bg-green-900/50 border-green-500 text-green-200'
