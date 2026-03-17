@@ -640,10 +640,10 @@ for i in range(len(chaine) - 1, -1, -1):
               id: 9,
               question: 'Comment construire la chaîne inversée de texte SANS [::-1] ?',
               options: [
-                'for i in range(len(texte)): resultat += texte[i]',
-                'for i in range(len(texte) - 1, -1, -1): resultat += texte[i]',
+                'for i in range(len(texte)):\n    resultat += texte[i]',
+                'for i in range(len(texte) - 1, -1, -1):\n    resultat += texte[i]',
                 'resultat = texte.reverse()',
-                'for lettre in texte: resultat = lettre + resultat'
+                'for lettre in texte:\n    resultat = lettre + resultat'
               ],
               correct: 1,
               explanation: 'range(len(texte) - 1, -1, -1) parcourt les indices de la fin vers le début. On construit ainsi la chaîne inversée.'
