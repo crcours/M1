@@ -611,7 +611,7 @@ for i in range(len(chaine) - 1, -1, -1):
             {
               id: 5,
               question: 'Que renvoie "bonjour"[0:3] ?',
-              options: ['"bonj"', '"bon"', '"onj"', '"bon"'],
+              options: ['"bonj"', '"bon"', '"onj"', '"jour"'],
               correct: 1,
               explanation: 'Le slice [0:3] renvoie les caractères aux indices 0, 1, 2 (la fin est exclue). On obtient "bon".'
             },
@@ -640,10 +640,10 @@ for i in range(len(chaine) - 1, -1, -1):
               id: 9,
               question: 'Comment construire la chaîne inversée de texte SANS [::-1] ?',
               options: [
-                'for i in range(len(texte)):\n\u00A0\u00A0\u00A0\u00A0resultat += texte[i]',
-                'for i in range(len(texte) - 1, -1, -1):\n\u00A0\u00A0\u00A0\u00A0resultat += texte[i]',
+                'for i in range(len(texte)):\n    resultat += texte[i]',
+                'for i in range(len(texte) - 1, -1, -1):\n    resultat += texte[i]',
                 'resultat = texte.reverse()',
-                'for lettre in texte:\n\u00A0\u00A0\u00A0\u00A0resultat = lettre + resultat'
+                'for lettre in texte:\n    resultat = lettre + resultat'
               ],
               correct: 1,
               explanation: 'range(len(texte) - 1, -1, -1) parcourt les indices de la fin vers le début. On construit ainsi la chaîne inversée.'
@@ -669,6 +669,22 @@ for i in range(len(chaine) - 1, -1, -1):
             return q && answers[k] === q.correct;
           }).length;
 
+          // Render option: if it contains \n, use a code block style
+          const renderOption = (opt) => {
+            if (opt.includes('\n')) {
+              return (
+                <pre style={{
+                  margin: 0,
+                  fontFamily: "'Courier New', monospace",
+                  fontSize: '12px',
+                  whiteSpace: 'pre',
+                  lineHeight: '1.5',
+                }}>{opt}</pre>
+              );
+            }
+            return opt;
+          };
+
           return (
             <div className="space-y-6">
               <h2 className="text-3xl font-bold text-indigo-400 mb-6">❓ QCM — Testez vos connaissances</h2>
@@ -680,7 +696,7 @@ for i in range(len(chaine) - 1, -1, -1):
                     ? answers[q.id] === q.correct ? 'border-green-500' : 'border-red-500'
                     : 'border-slate-700'
                 }`}>
-                  <h3 className="text-lg font-semibold mb-4 text-white whitespace-pre-wrap">
+                  <h3 className="text-lg font-semibold mb-4 text-white">
                     {q.id}. {q.question}
                   </h3>
                   <div className="grid md:grid-cols-2 gap-3">
@@ -688,7 +704,7 @@ for i in range(len(chaine) - 1, -1, -1):
                       <button
                         key={idx}
                         onClick={() => handleAnswer(q.id, idx)}
-                        className={`p-3 rounded-lg text-left text-sm transition-all border-2 whitespace-pre-wrap ${
+                        className={`p-3 rounded-lg text-left text-sm transition-all border-2 ${
                           showResults
                             ? idx === q.correct
                               ? 'bg-green-900/50 border-green-500 text-green-200'
@@ -701,7 +717,7 @@ for i in range(len(chaine) - 1, -1, -1):
                         }`}
                       >
                         <span className="font-bold mr-2">{String.fromCharCode(65 + idx)}.</span>
-                        {opt}
+                        {renderOption(opt)}
                       </button>
                     ))}
                   </div>
