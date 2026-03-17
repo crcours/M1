@@ -1,0 +1,204 @@
+{
+  "globalInfo": {
+    "serie": "chaines1",
+    "author": "Corentin Rordorf"
+  },
+  "exercises": [
+    {
+      "id": 1,
+      "title": "Compter les lettres 'e' dans une chaîne",
+      "description": "Écrivez un programme qui compte le nombre de fois que la lettre 'e' apparaît dans une chaîne de caractères.",
+      "example": "\"bonjour le monde\" → 3",
+      "difficulty": "easy",
+      "starter": "texte = \"bonjour le monde\"\ncompteur = 0\n\nfor lettre in texte:\n    # Complétez le code\n    pass\n\nprint(compteur)",
+      "solution": "texte = \"bonjour le monde\"\ncompteur = 0\n\nfor lettre in texte:\n    if lettre == \"e\":\n        compteur += 1\n\nprint(compteur)  # Affiche : 3",
+      "hint": "Parcourez la chaîne lettre par lettre avec une boucle for. Comparez chaque lettre avec \"e\" en utilisant ==.",
+      "expected_output": "3",
+      "tests": [
+        {
+          "label": "\"bonjour le monde\"",
+          "context": "texte = \"bonjour le monde\"\ncompteur = 0",
+          "expected": "3"
+        },
+        {
+          "label": "\"elle vend des cerises\"",
+          "context": "texte = \"elle vend des cerises\"\ncompteur = 0",
+          "expected": "5"
+        },
+        {
+          "label": "\"bonjour\" (aucun e)",
+          "context": "texte = \"bonjour\"\ncompteur = 0",
+          "expected": "0"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Compter les espaces",
+      "description": "Écrivez un programme qui compte le nombre d'espaces dans une chaîne de caractères.",
+      "example": "\"bonjour le monde\" → 2",
+      "difficulty": "easy",
+      "starter": "texte = \"bonjour le monde\"\ncompteur = 0\n\nfor caractere in texte:\n    # Complétez le code\n    pass\n\nprint(compteur)",
+      "solution": "texte = \"bonjour le monde\"\ncompteur = 0\n\nfor caractere in texte:\n    if caractere == \" \":\n        compteur += 1\n\nprint(compteur)  # Affiche : 2",
+      "hint": "Un espace est simplement le caractère \" \". Comparez chaque caractère avec \" \".",
+      "expected_output": "2",
+      "tests": [
+        {
+          "label": "\"bonjour le monde\"",
+          "context": "texte = \"bonjour le monde\"\ncompteur = 0",
+          "expected": "2"
+        },
+        {
+          "label": "\"un deux trois quatre\"",
+          "context": "texte = \"un deux trois quatre\"\ncompteur = 0",
+          "expected": "3"
+        },
+        {
+          "label": "\"python\" (aucun espace)",
+          "context": "texte = \"python\"\ncompteur = 0",
+          "expected": "0"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Inverser une chaîne",
+      "description": "Écrivez un programme qui construit une nouvelle chaîne dans l'ordre inverse, SANS utiliser le slicing [::-1]. Parcourez les indices de la fin vers le début.",
+      "example": "\"bonjour\" → \"ruojnob\"",
+      "difficulty": "easy",
+      "starter": "texte = \"bonjour\"\nresultat = \"\"\n\n# Parcourez les indices de la fin vers le début\n# Indice : range(len(texte) - 1, -1, -1)\n\nprint(resultat)",
+      "solution": "texte = \"bonjour\"\nresultat = \"\"\n\nfor i in range(len(texte) - 1, -1, -1):\n    resultat += texte[i]\n\nprint(resultat)  # Affiche : ruojnob",
+      "hint": "Utilisez range(len(texte) - 1, -1, -1) pour parcourir les indices de la fin vers le début. Ajoutez chaque lettre à resultat avec +=.",
+      "expected_output": "ruojnob",
+      "tests": [
+        {
+          "label": "\"bonjour\"",
+          "context": "texte = \"bonjour\"\nresultat = \"\"",
+          "expected": "ruojnob"
+        },
+        {
+          "label": "\"python\"",
+          "context": "texte = \"python\"\nresultat = \"\"",
+          "expected": "nohtyp"
+        },
+        {
+          "label": "\"abcd\"",
+          "context": "texte = \"abcd\"\nresultat = \"\"",
+          "expected": "dcba"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Compter les majuscules",
+      "description": "Écrivez un programme qui compte le nombre de lettres majuscules dans une chaîne. Une lettre est majuscule si elle est entre 'A' et 'Z'.",
+      "example": "\"Bonjour Le Monde\" → 3",
+      "difficulty": "medium",
+      "starter": "texte = \"Bonjour Le Monde\"\ncompteur = 0\n\nfor lettre in texte:\n    # Complétez le code\n    # Indice : comparez lettre >= \"A\" et lettre <= \"Z\"\n    pass\n\nprint(compteur)",
+      "solution": "texte = \"Bonjour Le Monde\"\ncompteur = 0\n\nfor lettre in texte:\n    if lettre >= \"A\" and lettre <= \"Z\":\n        compteur += 1\n\nprint(compteur)  # Affiche : 3",
+      "hint": "Comparez chaque lettre avec \"A\" et \"Z\" en utilisant >= et <=. En Python on peut comparer des caractères avec < et > car ils suivent l'ordre alphabétique.",
+      "expected_output": "3",
+      "tests": [
+        {
+          "label": "\"Bonjour Le Monde\"",
+          "context": "texte = \"Bonjour Le Monde\"\ncompteur = 0",
+          "expected": "3"
+        },
+        {
+          "label": "\"PYTHON est Super\"",
+          "context": "texte = \"PYTHON est Super\"\ncompteur = 0",
+          "expected": "7"
+        },
+        {
+          "label": "\"tout en minuscule\"",
+          "context": "texte = \"tout en minuscule\"\ncompteur = 0",
+          "expected": "0"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Construire la chaîne sans voyelles",
+      "description": "Écrivez un programme qui construit une nouvelle chaîne en supprimant toutes les voyelles (a, e, i, o, u, y) minuscules et majuscules.",
+      "example": "\"bonjour\" → \"bnjr\"",
+      "difficulty": "medium",
+      "starter": "texte = \"bonjour le monde\"\nresultat = \"\"\nvoyelles = \"aeiouyAEIOUY\"\n\nfor lettre in texte:\n    # Complétez le code\n    pass\n\nprint(resultat)",
+      "solution": "texte = \"bonjour le monde\"\nresultat = \"\"\nvoyelles = \"aeiouyAEIOUY\"\n\nfor lettre in texte:\n    if lettre not in voyelles:\n        resultat += lettre\n\nprint(resultat)  # Affiche : bnjr l mnd",
+      "hint": "Utilisez l'opérateur 'in' pour vérifier si une lettre est dans la chaîne voyelles. Si elle n'est PAS une voyelle (not in), ajoutez-la à resultat.",
+      "expected_output": "bnjr l mnd",
+      "tests": [
+        {
+          "label": "\"bonjour le monde\"",
+          "context": "texte = \"bonjour le monde\"\nresultat = \"\"\nvoyelles = \"aeiouyAEIOUY\"",
+          "expected": "bnjr l mnd"
+        },
+        {
+          "label": "\"python\"",
+          "context": "texte = \"python\"\nresultat = \"\"\nvoyelles = \"aeiouyAEIOUY\"",
+          "expected": "pthn"
+        },
+        {
+          "label": "\"aeiou\"",
+          "context": "texte = \"aeiou\"\nresultat = \"\"\nvoyelles = \"aeiouyAEIOUY\"",
+          "expected": ""
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Vérifier si une chaîne est un palindrome",
+      "description": "Écrivez un programme qui vérifie si une chaîne se lit pareil dans les deux sens. Affichez True si c'est un palindrome, False sinon. SANS utiliser le slicing [::-1].",
+      "example": "\"kayak\" → True",
+      "difficulty": "hard",
+      "starter": "texte = \"kayak\"\nest_palindrome = True\n\n# Comparez le premier caractère avec le dernier, etc.\n# Indice : utilisez len(texte) et les indices\n\nprint(est_palindrome)",
+      "solution": "texte = \"kayak\"\nest_palindrome = True\n\nfor i in range(len(texte) // 2):\n    if texte[i] != texte[len(texte) - 1 - i]:\n        est_palindrome = False\n\nprint(est_palindrome)  # Affiche : True",
+      "hint": "Comparez texte[i] avec texte[len(texte) - 1 - i] pour chaque i de 0 à len(texte)//2. Si une paire ne correspond pas, ce n'est pas un palindrome.",
+      "expected_output": "True",
+      "tests": [
+        {
+          "label": "\"kayak\" (palindrome)",
+          "context": "texte = \"kayak\"\nest_palindrome = True",
+          "expected": "True"
+        },
+        {
+          "label": "\"radar\" (palindrome)",
+          "context": "texte = \"radar\"\nest_palindrome = True",
+          "expected": "True"
+        },
+        {
+          "label": "\"bonjour\" (pas palindrome)",
+          "context": "texte = \"bonjour\"\nest_palindrome = True",
+          "expected": "False"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Compter les mots d'une phrase",
+      "description": "Écrivez un programme qui compte le nombre de mots dans une phrase. Un nouveau mot commence après chaque espace. SANS utiliser split().",
+      "example": "\"bonjour le monde\" → 3",
+      "difficulty": "hard",
+      "starter": "texte = \"bonjour le monde\"\nnb_mots = 1\n\n# Parcourez la chaîne et comptez les espaces\n# Attention : une phrase non vide contient toujours au moins 1 mot\n\nprint(nb_mots)",
+      "solution": "texte = \"bonjour le monde\"\nnb_mots = 1\n\nfor caractere in texte:\n    if caractere == \" \":\n        nb_mots += 1\n\nprint(nb_mots)  # Affiche : 3",
+      "hint": "Chaque espace sépare deux mots. Si vous comptez les espaces et ajoutez 1, vous obtenez le nombre de mots. Initialisez nb_mots à 1.",
+      "expected_output": "3",
+      "tests": [
+        {
+          "label": "\"bonjour le monde\"",
+          "context": "texte = \"bonjour le monde\"\nnb_mots = 1",
+          "expected": "3"
+        },
+        {
+          "label": "\"un deux trois quatre cinq\"",
+          "context": "texte = \"un deux trois quatre cinq\"\nnb_mots = 1",
+          "expected": "5"
+        },
+        {
+          "label": "\"python\" (un seul mot)",
+          "context": "texte = \"python\"\nnb_mots = 1",
+          "expected": "1"
+        }
+      ]
+    }
+  ]
+}
