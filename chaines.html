@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cours Python - Les Chaînes de Caractères</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .code-editor {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function PythonStringCourse() {
+          const [activeSection, setActiveSection] = useState('intro');
+
+          const sections = [
+            { id: 'intro',     title: 'Introduction', icon: '📚' },
+            { id: 'indices',   title: 'Indices',       icon: '🔢' },
+            { id: 'operations',title: 'Opérations',    icon: '🛠️' },
+            { id: 'parcourir', title: 'Parcourir',     icon: '🔄' },
+            { id: 'qcm',       title: 'QCM',           icon: '❓' },
+            { id: 'exercises', title: 'Exercices',     icon: '💪' },
+          ];
+
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-blue-900 via-indigo-900 to-violet-900 text-white">
+              <div className="max-w-7xl mx-auto p-4 md:p-8">
+                {/* Header */}
+                <div className="mb-8 text-center">
+                  <h1 className="text-4xl md:text-6xl font-bold mb-3 bg-gradient-to-r from-blue-400 via-indigo-400 to-violet-400 bg-clip-text text-transparent">
+                    🐍 Python - Les Chaînes
+                  </h1>
+                  <p className="text-xl text-slate-300">Cours interactif avec exercices pratiques</p>
+                </div>
+
+                {/* Navigation */}
+                <div className="flex gap-2 md:gap-4 mb-8 justify-center flex-wrap">
+                  {sections.map((section) => (
+                    section.id === 'exercises' ? (
+                      <a
+                        key={section.id}
+                        href="https://crcours.github.io/tools/pythonexos?json=https://crcours.github.io/M1/json/exchaines1.json"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 md:px-6 py-3 rounded-xl font-semibold text-sm md:text-base transition-all transform hover:scale-105 bg-slate-800 hover:bg-slate-700"
+                      >
+                        <span className="mr-2">{section.icon}</span>
+                        {section.title} 🔗
+                      </a>
+                    ) : (
+                      <button
+                        key={section.id}
+                        onClick={() => setActiveSection(section.id)}
+                        className={`px-4 md:px-6 py-3 rounded-xl font-semibold text-sm md:text-base transition-all transform hover:scale-105 ${
+                          activeSection === section.id
+                            ? 'bg-gradient-to-r from-indigo-500 to-blue-600 shadow-lg shadow-indigo-500/50'
+                            : 'bg-slate-800 hover:bg-slate-700'
+                        }`}
+                      >
+                        <span className="mr-2">{section.icon}</span>
+                        {section.title}
+                      </button>
+                    )
+                  ))}
+                </div>
+
+                {/* Content */}
+                <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-2xl border border-slate-700">
+                  {activeSection === 'intro'      && <IntroSection />}
+                  {activeSection === 'indices'    && <IndicesSection />}
+                  {activeSection === 'operations' && <OperationsSection />}
+                  {activeSection === 'parcourir'  && <ParcourirSection />}
+                  {activeSection === 'qcm'        && <QCMSection />}
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        // ─── INTRO ────────────────────────────────────────────────────────────────
+        function IntroSection() {
+          return (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold text-indigo-400 mb-6">📚 Introduction aux Chaînes de Caractères</h2>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-indigo-500">
+                <h3 className="text-xl font-semibold mb-3 text-indigo-300">Qu'est-ce qu'une chaîne ?</h3>
+                <p className="text-slate-200 leading-relaxed mb-4">
+                  Une <strong>chaîne de caractères</strong> (ou <em>string</em>) est une suite de caractères entre guillemets.
+                  En Python, on peut utiliser des guillemets simples <code className="bg-slate-800 px-2 py-1 rounded">'...'</code> ou
+                  doubles <code className="bg-slate-800 px-2 py-1 rounded">"..."</code> — les deux sont équivalents.
+                </p>
+
+                <div className="code-editor mb-4">
+                  <pre>{`# Créer une chaîne
+prenom = "Alice"
+message = 'Bonjour tout le monde'
+vide = ""          # chaîne vide
+
+# Une chaîne peut contenir n'importe quel caractère
+texte = "Python 3.11 !"
+print(texte)       # Python 3.11 !
+print(len(texte))  # 13  ← nombre de caractères`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-indigo-900/30 to-blue-900/30 rounded-xl p-6 border border-indigo-500/30">
+                <h3 className="text-xl font-semibold mb-4 text-indigo-300">🎯 Caractéristiques importantes</h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-slate-900/50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-indigo-400 mb-2">Ordonnées</h4>
+                    <p className="text-sm text-slate-300">Les caractères ont un ordre fixe. Le premier est toujours à la position 0.</p>
+                  </div>
+                  <div className="bg-slate-900/50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-indigo-400 mb-2">Immuables</h4>
+                    <p className="text-sm text-slate-300">Contrairement aux listes, on ne peut pas modifier un caractère dans une chaîne. Il faut créer une nouvelle chaîne.</p>
+                  </div>
+                  <div className="bg-slate-900/50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-indigo-400 mb-2">Indexables</h4>
+                    <p className="text-sm text-slate-300">On accède à chaque caractère via son index : <code className="bg-slate-800 px-1 rounded">chaine[0]</code></p>
+                  </div>
+                  <div className="bg-slate-900/50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-indigo-400 mb-2">Itérables</h4>
+                    <p className="text-sm text-slate-300">On peut parcourir tous les caractères avec une boucle <code className="bg-slate-800 px-1 rounded">for</code>.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6">
+                <h3 className="text-xl font-semibold mb-3 text-blue-400">✨ Pourquoi les chaînes sont-elles utiles ?</h3>
+                <ul className="space-y-2 text-slate-200">
+                  <li className="flex items-start"><span className="text-indigo-400 mr-2">•</span><span>Stocker et afficher du texte (noms, messages, résultats…)</span></li>
+                  <li className="flex items-start"><span className="text-indigo-400 mr-2">•</span><span>Analyser du texte (compter des lettres, des mots…)</span></li>
+                  <li className="flex items-start"><span className="text-indigo-400 mr-2">•</span><span>Construire de nouvelles chaînes (filtrer, transformer…)</span></li>
+                  <li className="flex items-start"><span className="text-indigo-400 mr-2">•</span><span>Vérifier des conditions (palindrome, présence d'un caractère…)</span></li>
+                </ul>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-blue-500">
+                <h3 className="text-xl font-semibold mb-3 text-blue-300">🔤 Chaînes vs Listes</h3>
+                <div className="code-editor">
+                  <pre>{`# Une chaîne ressemble beaucoup à une liste de caractères
+texte = "bonjour"
+
+# On peut accéder aux caractères par indice
+print(texte[0])    # b
+print(texte[-1])   # r
+
+# On peut mesurer sa longueur
+print(len(texte))  # 7
+
+# On peut la parcourir avec for
+for lettre in texte:
+    print(lettre)  # b, o, n, j, o, u, r
+
+# MAIS on ne peut pas modifier un caractère directement !
+# texte[0] = "B"   ← ERREUR !
+# Il faut créer une nouvelle chaîne.`}</pre>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        // ─── INDICES ──────────────────────────────────────────────────────────────
+        function IndicesSection() {
+          return (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold text-indigo-400 mb-6">🔢 Les Indices</h2>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-indigo-500">
+                <h3 className="text-xl font-semibold mb-4 text-indigo-300">Les indices commencent à 0 !</h3>
+                <p className="text-slate-200 mb-4">
+                  Comme pour les listes, les indices des chaînes commencent à <strong className="text-yellow-400">0</strong>.
+                  Chaque caractère (lettre, espace, chiffre, symbole) occupe une position.
+                </p>
+
+                <div className="bg-slate-800 rounded-xl p-4 mb-4 overflow-x-auto">
+                  <table className="w-full text-center text-sm font-mono">
+                    <thead>
+                      <tr>
+                        <td className="text-slate-400 pb-2">Chaîne</td>
+                        <td className="text-yellow-400 px-3 pb-2">b</td>
+                        <td className="text-yellow-400 px-3 pb-2">o</td>
+                        <td className="text-yellow-400 px-3 pb-2">n</td>
+                        <td className="text-yellow-400 px-3 pb-2">j</td>
+                        <td className="text-yellow-400 px-3 pb-2">o</td>
+                        <td className="text-yellow-400 px-3 pb-2">u</td>
+                        <td className="text-yellow-400 px-3 pb-2">r</td>
+                      </tr>
+                      <tr>
+                        <td className="text-slate-400 pb-1">Indice positif</td>
+                        {[0,1,2,3,4,5,6].map(i => (
+                          <td key={i} className="text-indigo-400 px-3"><span className="bg-indigo-900/50 px-2 py-1 rounded">{i}</span></td>
+                        ))}
+                      </tr>
+                      <tr>
+                        <td className="text-slate-400 pt-1">Indice négatif</td>
+                        {[-7,-6,-5,-4,-3,-2,-1].map(i => (
+                          <td key={i} className="text-pink-400 px-3"><span className="bg-pink-900/50 px-2 py-1 rounded">{i}</span></td>
+                        ))}
+                      </tr>
+                    </thead>
+                  </table>
+                </div>
+
+                <div className="code-editor mb-4">
+                  <pre>{`texte = "bonjour"
+
+# Accès par indice positif
+print(texte[0])   # b   ← premier caractère
+print(texte[1])   # o
+print(texte[6])   # r   ← dernier caractère
+
+# Accès par indice négatif (depuis la fin)
+print(texte[-1])  # r   ← dernier caractère
+print(texte[-2])  # u
+print(texte[-7])  # b   ← premier caractère`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-amber-900/30 rounded-xl p-4 border-l-4 border-amber-500">
+                <p className="text-amber-200">
+                  ⚠️ <strong>Attention :</strong> si une chaîne contient 7 caractères, les indices valides sont{" "}
+                  <strong className="text-yellow-400">0 à 6</strong>.
+                  Tenter d'accéder à <code className="bg-slate-800 px-1 rounded">texte[7]</code> provoquera une erreur <code className="bg-slate-800 px-1 rounded">IndexError</code>.
+                </p>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-blue-500">
+                <h3 className="text-xl font-semibold mb-4 text-blue-300">✂️ Les Slices (tranches)</h3>
+                <p className="text-slate-200 mb-4">
+                  Un <strong>slice</strong> extrait une portion de chaîne :
+                  <code className="bg-slate-800 px-2 py-1 rounded ml-1">chaine[debut:fin]</code>.
+                  L'élément à l'indice <code className="bg-slate-800 px-1 rounded">fin</code> est <strong className="text-yellow-400">exclu</strong>.
+                </p>
+
+                <div className="code-editor mb-4">
+                  <pre>{`texte = "bonjour"
+
+print(texte[0:3])   # bon   ← indices 0, 1, 2
+print(texte[3:7])   # jour  ← indices 3, 4, 5, 6
+print(texte[:3])    # bon   ← depuis le début
+print(texte[3:])    # jour  ← jusqu'à la fin
+print(texte[:])     # bonjour ← toute la chaîne
+print(texte[::-1])  # ruojnob ← inversée`}</pre>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-slate-800/70 rounded-lg p-4">
+                    <h4 className="font-semibold text-blue-400 mb-2">Syntaxe complète</h4>
+                    <code className="text-yellow-300 text-sm">chaine[debut : fin : pas]</code>
+                    <ul className="text-slate-300 text-sm mt-2 space-y-1">
+                      <li><span className="text-indigo-400">debut</span> — indice de départ (inclus, défaut : 0)</li>
+                      <li><span className="text-indigo-400">fin</span> — indice de fin (<strong>exclu</strong>, défaut : fin)</li>
+                      <li><span className="text-indigo-400">pas</span> — saut entre chaque caractère (défaut : 1)</li>
+                    </ul>
+                  </div>
+                  <div className="bg-slate-800/70 rounded-lg p-4">
+                    <h4 className="font-semibold text-blue-400 mb-2">Exemples rapides</h4>
+                    <ul className="text-slate-300 text-sm space-y-1 font-mono">
+                      <li><span className="text-green-400">texte[:3]</span> → 3 premiers caractères</li>
+                      <li><span className="text-green-400">texte[2:]</span> → à partir du 3ᵉ</li>
+                      <li><span className="text-green-400">texte[-2:]</span> → 2 derniers</li>
+                      <li><span className="text-green-400">texte[::2]</span> → un caractère sur deux</li>
+                      <li><span className="text-green-400">texte[::-1]</span> → chaîne inversée</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-indigo-900/30 to-blue-900/30 rounded-xl p-6 border border-indigo-500/30">
+                <h3 className="text-xl font-semibold mb-3 text-indigo-300">💡 À retenir sur les indices</h3>
+                <ul className="space-y-2 text-slate-200">
+                  <li className="flex items-start"><span className="text-indigo-400 mr-2">→</span><span>Le premier caractère est toujours à l'indice <strong className="text-yellow-400">0</strong>.</span></li>
+                  <li className="flex items-start"><span className="text-indigo-400 mr-2">→</span><span>Le dernier caractère est à l'indice <strong className="text-yellow-400">len(chaine) - 1</strong>, ou simplement <strong className="text-pink-400">-1</strong>.</span></li>
+                  <li className="flex items-start"><span className="text-indigo-400 mr-2">→</span><span>Les espaces et symboles comptent comme des caractères normaux.</span></li>
+                  <li className="flex items-start"><span className="text-indigo-400 mr-2">→</span><span>Un indice hors limite déclenche une <code className="bg-slate-800 px-1 rounded">IndexError</code>.</span></li>
+                </ul>
+              </div>
+            </div>
+          );
+        }
+
+        // ─── OPERATIONS ───────────────────────────────────────────────────────────
+        function OperationsSection() {
+          return (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold text-indigo-400 mb-6">🛠️ Opérations sur les Chaînes</h2>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-indigo-500">
+                <h3 className="text-xl font-semibold mb-4 text-indigo-300">Concaténation — Assembler des chaînes</h3>
+                <p className="text-slate-200 mb-4">
+                  L'opérateur <code className="bg-slate-800 px-2 py-1 rounded">+</code> permet de coller deux chaînes ensemble.
+                  C'est la façon la plus simple de construire une nouvelle chaîne progressivement.
+                </p>
+                <div className="code-editor mb-4">
+                  <pre>{`prenom = "Alice"
+nom = "Dupont"
+
+# Concaténation avec +
+nom_complet = prenom + " " + nom
+print(nom_complet)   # Alice Dupont
+
+# Construire une chaîne lettre par lettre
+resultat = ""
+for lettre in "bonjour":
+    resultat += lettre   # équivalent à resultat = resultat + lettre
+print(resultat)          # bonjour`}</pre>
+                </div>
+                <div className="bg-blue-900/30 rounded-xl p-4 border border-blue-500/30">
+                  <p className="text-blue-200 text-sm">
+                    💡 <strong>Astuce :</strong> On commence souvent par une chaîne vide <code className="bg-slate-800 px-1 rounded">resultat = ""</code>,
+                    puis on y ajoute des caractères avec <code className="bg-slate-800 px-1 rounded">+=</code> dans une boucle.
+                    C'est l'équivalent de <code className="bg-slate-800 px-1 rounded">append()</code> pour les listes.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-purple-500">
+                <h3 className="text-xl font-semibold mb-4 text-purple-300">L'opérateur <code>in</code> — Tester la présence</h3>
+                <p className="text-slate-200 mb-4">
+                  <code className="bg-slate-800 px-2 py-1 rounded">x in chaine</code> renvoie <code className="bg-slate-800 px-2 py-1 rounded">True</code> si
+                  le caractère (ou la sous-chaîne) <code className="bg-slate-800 px-2 py-1 rounded">x</code> est présent dans la chaîne.
+                </p>
+                <div className="code-editor mb-4">
+                  <pre>{`texte = "bonjour le monde"
+voyelles = "aeiouy"
+
+# Tester si un caractère est présent
+print("o" in texte)      # True
+print("z" in texte)      # False
+
+# Très utile pour tester si une lettre est une voyelle
+lettre = "e"
+if lettre in voyelles:
+    print("C'est une voyelle")
+
+# Tester une sous-chaîne entière
+print("monde" in texte)  # True
+print("Paris" in texte)  # False`}</pre>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-green-500">
+                  <h3 className="text-lg font-semibold mb-3 text-green-300">Comparer des caractères</h3>
+                  <p className="text-slate-300 text-sm mb-3">En Python, les caractères suivent l'ordre alphabétique (et ASCII). On peut les comparer avec &lt;, &gt;, ==.</p>
+                  <div className="code-editor text-sm">
+                    <pre>{`# Majuscules : "A" à "Z"
+lettre = "G"
+if lettre >= "A" and lettre <= "Z":
+    print("Majuscule")
+
+# Minuscules : "a" à "z"
+lettre = "g"
+if lettre >= "a" and lettre <= "z":
+    print("Minuscule")
+
+# Chiffres : "0" à "9"
+c = "5"
+if c >= "0" and c <= "9":
+    print("Chiffre")`}</pre>
+                  </div>
+                </div>
+
+                <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-pink-500">
+                  <h3 className="text-lg font-semibold mb-3 text-pink-300">len() et range()</h3>
+                  <p className="text-slate-300 text-sm mb-3">Comme pour les listes, <code className="bg-slate-800 px-1 rounded">len()</code> donne la longueur et <code className="bg-slate-800 px-1 rounded">range(len())</code> permet de parcourir les indices.</p>
+                  <div className="code-editor text-sm">
+                    <pre>{`texte = "kayak"
+print(len(texte))   # 5
+
+# Parcourir avec les indices
+for i in range(len(texte)):
+    print(i, texte[i])
+# 0 k
+# 1 a
+# 2 y
+# 3 a
+# 4 k
+
+# Utile pour comparer des positions
+# texte[0] et texte[-1], etc.`}</pre>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-blue-500">
+                <h3 className="text-xl font-semibold mb-4 text-blue-300">Résumé des opérations essentielles</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-slate-600">
+                        <th className="text-left text-indigo-400 pb-2 pr-4">Opération</th>
+                        <th className="text-left text-indigo-400 pb-2 pr-4">Description</th>
+                        <th className="text-left text-indigo-400 pb-2">Exemple</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-slate-300">
+                      {[
+                        ["len(s)",        "Longueur de la chaîne",          'len("bonjour") → 7'],
+                        ["s[i]",          "Caractère à l'indice i",         '"bonjour"[0] → "b"'],
+                        ["s[i:j]",        "Sous-chaîne de i à j (exclu)",   '"bonjour"[0:3] → "bon"'],
+                        ["s + t",         "Concaténation",                  '"bon" + "jour" → "bonjour"'],
+                        ["x in s",        "Teste si x est dans s",          '"o" in "bonjour" → True'],
+                        ["s[::-1]",       "Chaîne inversée",                '"bonjour"[::-1] → "ruojnob"'],
+                        ["range(len(s))", "Indices de 0 à len-1",           "range(7) → 0,1,2,3,4,5,6"],
+                      ].map(([m, d, e]) => (
+                        <tr key={m} className="border-b border-slate-800">
+                          <td className="py-2 pr-4 font-mono text-yellow-300">{m}</td>
+                          <td className="py-2 pr-4">{d}</td>
+                          <td className="py-2 font-mono text-green-400 text-xs">{e}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        // ─── PARCOURIR ────────────────────────────────────────────────────────────
+        function ParcourirSection() {
+          return (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold text-indigo-400 mb-6">🔄 Parcourir une Chaîne</h2>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-indigo-500">
+                <h3 className="text-xl font-semibold mb-4 text-indigo-300">La boucle <code>for lettre in chaine</code></h3>
+                <p className="text-slate-200 mb-4">
+                  On peut parcourir une chaîne exactement comme une liste.
+                  À chaque tour, la variable prend la valeur du caractère suivant.
+                </p>
+                <div className="code-editor mb-4">
+                  <pre>{`texte = "bonjour"
+
+for lettre in texte:
+    print(lettre)
+
+# Affiche :
+# b
+# o
+# n
+# j
+# o
+# u
+# r`}</pre>
+                </div>
+                <p className="text-slate-300 text-sm">
+                  Le nom de la variable (<code className="bg-slate-800 px-1 rounded">lettre</code>) est libre — on peut l'appeler <code className="bg-slate-800 px-1 rounded">c</code>, <code className="bg-slate-800 px-1 rounded">car</code>, etc.
+                </p>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-purple-500">
+                <h3 className="text-xl font-semibold mb-4 text-purple-300">Compter des caractères</h3>
+                <p className="text-slate-200 mb-4">
+                  Le schéma est identique à celui des listes : compteur à 0, boucle, condition, incrément.
+                </p>
+                <div className="code-editor mb-4">
+                  <pre>{`texte = "bonjour le monde"
+
+# Compter les "o"
+compteur = 0
+for lettre in texte:
+    if lettre == "o":
+        compteur += 1
+
+print(compteur)   # 3
+
+# Compter les espaces
+nb_espaces = 0
+for c in texte:
+    if c == " ":
+        nb_espaces += 1
+print(nb_espaces) # 2`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-green-500">
+                <h3 className="text-xl font-semibold mb-4 text-green-300">Construire une nouvelle chaîne</h3>
+                <p className="text-slate-200 mb-4">
+                  Pour "filtrer" une chaîne, on part d'une chaîne vide et on y ajoute les caractères voulus avec <code className="bg-slate-800 px-1 rounded">+=</code>.
+                </p>
+                <div className="code-editor">
+                  <pre>{`texte = "bonjour le monde"
+voyelles = "aeiouyAEIOUY"
+
+# Construire la chaîne SANS les voyelles
+resultat = ""
+for lettre in texte:
+    if lettre not in voyelles:
+        resultat += lettre
+
+print(resultat)   # bnjr l mnd
+
+# Construire la chaîne inversée
+inverse = ""
+for i in range(len(texte) - 1, -1, -1):
+    inverse += texte[i]
+print(inverse)    # ednom el ruojnob`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-slate-900/50 rounded-xl p-6 border-l-4 border-yellow-500">
+                <h3 className="text-xl font-semibold mb-4 text-yellow-300">Vérifier une condition sur toute la chaîne</h3>
+                <div className="code-editor">
+                  <pre>{`texte = "kayak"
+
+# Vérifier si c'est un palindrome
+# Comparer le 1er avec le dernier, le 2ème avec l'avant-dernier...
+est_palindrome = True
+
+for i in range(len(texte) // 2):
+    if texte[i] != texte[len(texte) - 1 - i]:
+        est_palindrome = False
+
+print(est_palindrome)  # True
+
+# Compter les majuscules
+texte2 = "Bonjour Le Monde"
+nb_maj = 0
+for lettre in texte2:
+    if lettre >= "A" and lettre <= "Z":
+        nb_maj += 1
+print(nb_maj)   # 3`}</pre>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-indigo-900/30 to-blue-900/30 rounded-xl p-6 border border-indigo-500/30">
+                <h3 className="text-xl font-semibold mb-3 text-indigo-300">💡 Schémas généraux à retenir</h3>
+                <div className="code-editor">
+                  <pre>{`# 1. Compter des caractères
+compteur = 0
+for lettre in chaine:
+    if <condition sur lettre>:
+        compteur += 1
+
+# 2. Construire une nouvelle chaîne (filtrer)
+resultat = ""
+for lettre in chaine:
+    if <condition sur lettre>:
+        resultat += lettre
+
+# 3. Parcourir avec indices (pour comparer des positions)
+for i in range(len(chaine)):
+    # utiliser chaine[i]
+
+# 4. Parcourir de la fin vers le début
+for i in range(len(chaine) - 1, -1, -1):
+    # utiliser chaine[i]`}</pre>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        // ─── QCM ─────────────────────────────────────────────────────────────────
+        function QCMSection() {
+          const questions = [
+            {
+              id: 1,
+              question: 'Quel est le premier indice d\'une chaîne en Python ?',
+              options: ['1', '0', '-1', 'Dépend de la longueur'],
+              correct: 1,
+              explanation: 'Comme pour les listes, les indices commencent toujours à 0. Le premier caractère est à l\'indice 0.'
+            },
+            {
+              id: 2,
+              question: 'Que renvoie len("bonjour") ?',
+              options: ['6', '7', '8', '5'],
+              correct: 1,
+              explanation: '"bonjour" contient 7 caractères : b, o, n, j, o, u, r. len() renvoie donc 7.'
+            },
+            {
+              id: 3,
+              question: 'Que renvoie "bonjour"[0] ?',
+              options: ['"o"', '"r"', '"b"', 'Une erreur'],
+              correct: 2,
+              explanation: 'L\'indice 0 désigne toujours le premier caractère. "bonjour"[0] vaut "b".'
+            },
+            {
+              id: 4,
+              question: 'Que renvoie "bonjour"[-1] ?',
+              options: ['"b"', '"o"', '"u"', '"r"'],
+              correct: 3,
+              explanation: 'L\'indice -1 désigne le dernier caractère. "bonjour"[-1] vaut "r".'
+            },
+            {
+              id: 5,
+              question: 'Que renvoie "bonjour"[0:3] ?',
+              options: ['"bonj"', '"bon"', '"onj"', '"jour"'],
+              correct: 1,
+              explanation: 'Le slice [0:3] renvoie les caractères aux indices 0, 1, 2 (la fin est exclue). On obtient "bon".'
+            },
+            {
+              id: 6,
+              question: 'Quelle expression teste si la lettre "e" est une voyelle (voyelles = "aeiouy") ?',
+              options: ['"e" == voyelles', '"e" in voyelles', 'voyelles.find("e")', '"e" + voyelles'],
+              correct: 1,
+              explanation: 'L\'opérateur in teste si un caractère est présent dans une chaîne. "e" in "aeiouy" renvoie True.'
+            },
+            {
+              id: 7,
+              question: 'Peut-on modifier directement un caractère d\'une chaîne avec texte[0] = "B" ?',
+              options: ['Oui, toujours', 'Oui, si la chaîne est assez longue', 'Non, les chaînes sont immuables', 'Oui, avec la méthode modify()'],
+              correct: 2,
+              explanation: 'Les chaînes sont immuables en Python. On ne peut pas modifier un caractère directement. Il faut créer une nouvelle chaîne.'
+            },
+            {
+              id: 8,
+              question: 'Combien de fois la boucle s\'exécute avec for lettre in "python" ?',
+              options: ['5', '6', '7', '4'],
+              correct: 1,
+              explanation: '"python" contient 6 caractères (p, y, t, h, o, n). La boucle s\'exécute donc 6 fois.'
+            },
+            {
+              id: 9,
+              question: 'Comment construire la chaîne inversée de texte SANS [::-1] ?',
+              options: [
+                'for i in range(len(texte)):\n    resultat += texte[i]',
+                'for i in range(len(texte) - 1, -1, -1):\n    resultat += texte[i]',
+                'resultat = texte.reverse()',
+                'for lettre in texte:\n    resultat = lettre + resultat'
+              ],
+              correct: 1,
+              explanation: 'range(len(texte) - 1, -1, -1) parcourt les indices de la fin vers le début. On construit ainsi la chaîne inversée.'
+            },
+            {
+              id: 10,
+              question: 'Que vaut "python"[2:] ?',
+              options: ['"py"', '"thon"', '"ython"', '"pyt"'],
+              correct: 1,
+              explanation: '"python"[2:] renvoie tous les caractères à partir de l\'indice 2 jusqu\'à la fin : "t", "h", "o", "n" → "thon".'
+            },
+          ];
+
+          const [answers, setAnswers] = useState({});
+          const [showResults, setShowResults] = useState(false);
+
+          const handleAnswer = (qId, idx) => {
+            if (!showResults) setAnswers(prev => ({ ...prev, [qId]: idx }));
+          };
+
+          const score = Object.keys(answers).filter(k => {
+            const q = questions.find(q => q.id === parseInt(k));
+            return q && answers[k] === q.correct;
+          }).length;
+
+          // Render option: if it contains \n, use a code block style
+          const renderOption = (opt) => {
+            if (opt.includes('\n')) {
+              return (
+                <pre style={{
+                  margin: 0,
+                  fontFamily: "'Courier New', monospace",
+                  fontSize: '12px',
+                  whiteSpace: 'pre',
+                  lineHeight: '1.5',
+                }}>{opt}</pre>
+              );
+            }
+            return opt;
+          };
+
+          return (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-bold text-indigo-400 mb-6">❓ QCM — Testez vos connaissances</h2>
+              <p className="text-slate-300">{questions.length} questions · Sélectionnez la bonne réponse pour chaque question</p>
+
+              {questions.map((q) => (
+                <div key={q.id} className={`bg-slate-900/50 rounded-xl p-6 border-2 transition-all ${
+                  showResults
+                    ? answers[q.id] === q.correct ? 'border-green-500' : 'border-red-500'
+                    : 'border-slate-700'
+                }`}>
+                  <h3 className="text-lg font-semibold mb-4 text-white">
+                    {q.id}. {q.question}
+                  </h3>
+                  <div className="grid md:grid-cols-2 gap-3">
+                    {q.options.map((opt, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleAnswer(q.id, idx)}
+                        className={`p-3 rounded-lg text-left text-sm transition-all border-2 ${
+                          showResults
+                            ? idx === q.correct
+                              ? 'bg-green-900/50 border-green-500 text-green-200'
+                              : answers[q.id] === idx
+                              ? 'bg-red-900/50 border-red-500 text-red-200'
+                              : 'bg-slate-800 border-slate-600 text-slate-400'
+                            : answers[q.id] === idx
+                            ? 'bg-indigo-900/50 border-indigo-500 text-indigo-200'
+                            : 'bg-slate-800 border-slate-600 hover:border-indigo-500 hover:bg-slate-700'
+                        }`}
+                      >
+                        <span className="font-bold mr-2">{String.fromCharCode(65 + idx)}.</span>
+                        {renderOption(opt)}
+                      </button>
+                    ))}
+                  </div>
+                  {showResults && (
+                    <div className="mt-4 bg-blue-900/30 rounded-lg p-3 border border-blue-500/30">
+                      <p className="text-blue-200 text-sm">
+                        💡 <strong>Explication :</strong> {q.explanation}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              <div className="text-center">
+                {!showResults ? (
+                  <button
+                    onClick={() => setShowResults(true)}
+                    disabled={Object.keys(answers).length < questions.length}
+                    className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold text-lg transition-all transform hover:scale-105 shadow-lg"
+                  >
+                    📊 Voir les résultats
+                  </button>
+                ) : (
+                  <div className="space-y-4">
+                    <div className={`text-4xl font-bold ${score >= 8 ? 'text-green-400' : score >= 6 ? 'text-yellow-400' : 'text-red-400'}`}>
+                      {score} / {questions.length}
+                    </div>
+                    <p className="text-slate-300">
+                      {score === questions.length ? '🏆 Parfait !' : score >= 8 ? '👍 Très bien !' : score >= 6 ? '📚 Continuez à réviser !' : '💪 Relisez le cours !'}
+                    </p>
+                    <button
+                      onClick={() => { setAnswers({}); setShowResults(false); }}
+                      className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-xl font-bold text-lg transition-all transform hover:scale-105 shadow-lg"
+                    >
+                      🔄 Recommencer le QCM
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        ReactDOM.render(<PythonStringCourse />, document.getElementById('root'));
+    </script>
+</body>
+</html>
