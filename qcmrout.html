@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Routeurs & DNS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+ 
+        :root {
+            --primary: #00ff88;
+            --secondary: #0066ff;
+            --accent: #ff0066;
+            --bg-dark: #0a0e27;
+            --bg-medium: #1a1f3a;
+            --text-light: #e0e6ff;
+            --text-muted: #8892b0;
+            --correct: #00ff88;
+            --incorrect: #ff0066;
+        }
+ 
+        body {
+            font-family: 'Space Mono', monospace;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+ 
+        .network-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+ 
+        .node {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 3s ease-in-out infinite;
+        }
+ 
+        .connection {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+            transform-origin: left center;
+            animation: flow 2s linear infinite;
+        }
+ 
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+ 
+        @keyframes flow {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+ 
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+ 
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: slideDown 0.8s ease-out;
+        }
+ 
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+ 
+        h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            letter-spacing: -2px;
+        }
+ 
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+        }
+ 
+        .progress-container {
+            background: var(--bg-medium);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            animation: fadeIn 1s ease-out;
+        }
+ 
+        .progress-bar {
+            height: 8px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+ 
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px var(--primary);
+        }
+ 
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+ 
+        .score {
+            color: var(--primary);
+            font-weight: 700;
+        }
+ 
+        .question-card {
+            background: var(--bg-medium);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            animation: fadeInUp 0.6s ease-out backwards;
+            transition: all 0.3s ease;
+        }
+ 
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+ 
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+ 
+        .question-card.answered {
+            opacity: 0.7;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+ 
+        .question-number {
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+ 
+        .question-text {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            color: var(--text-light);
+        }
+ 
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+ 
+        .option {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 18px 22px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+ 
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+ 
+        .option:hover {
+            border-color: var(--primary);
+            background: rgba(0, 255, 136, 0.05);
+            transform: translateX(5px);
+        }
+ 
+        .option:hover::before {
+            left: 100%;
+        }
+ 
+        .option.selected {
+            border-color: var(--secondary);
+            background: rgba(0, 102, 255, 0.15);
+        }
+ 
+        .option.correct {
+            border-color: var(--correct);
+            background: rgba(0, 255, 136, 0.15);
+            animation: correctPulse 0.6s ease;
+        }
+ 
+        .option.incorrect {
+            border-color: var(--incorrect);
+            background: rgba(255, 0, 102, 0.15);
+            animation: shake 0.4s ease;
+        }
+ 
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+ 
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+ 
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+ 
+        .feedback {
+            margin-top: 15px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            animation: slideIn 0.4s ease;
+        }
+ 
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+ 
+        .feedback.correct {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 4px solid var(--correct);
+            color: var(--correct);
+        }
+ 
+        .feedback.incorrect {
+            background: rgba(255, 0, 102, 0.1);
+            border-left: 4px solid var(--incorrect);
+            color: var(--incorrect);
+        }
+ 
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            border: none;
+            border-radius: 12px;
+            color: var(--bg-dark);
+            font-family: 'Syne', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+ 
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 255, 136, 0.4);
+        }
+ 
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+ 
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+ 
+        .results {
+            background: var(--bg-medium);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            border: 2px solid var(--primary);
+            animation: scaleIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+ 
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+ 
+        .results h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+ 
+        .final-score {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 20px 0;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+        }
+ 
+        .performance-message {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+ 
+        .restart-btn {
+            padding: 15px 40px;
+            background: transparent;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            color: var(--primary);
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+ 
+        .restart-btn:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+            transform: translateY(-2px);
+        }
+ 
+        .hidden {
+            display: none;
+        }
+ 
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .question-text { font-size: 1.1rem; }
+            .container { padding: 20px 15px; }
+            .question-card { padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="network-bg" id="networkBg"></div>
+ 
+    <div class="container">
+        <header>
+            <h1>QUIZ ROUTEURS & DNS</h1>
+            <p class="subtitle">Interconnexion de réseaux et protocole DNS</p>
+        </header>
+ 
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text">
+                <span>Question <span id="currentQuestion">0</span> / <span id="totalQuestions">0</span></span>
+                <span class="score">Score: <span id="currentScore">0</span> / <span id="maxScore">0</span></span>
+            </div>
+        </div>
+ 
+        <div id="quizContainer"></div>
+ 
+        <button class="submit-btn hidden" id="submitBtn">Voir les résultats</button>
+ 
+        <div class="results hidden" id="results">
+            <h2>Quiz terminé !</h2>
+            <div class="final-score" id="finalScore"></div>
+            <p class="performance-message" id="performanceMessage"></p>
+            <button class="restart-btn" onclick="location.reload()">Recommencer</button>
+        </div>
+    </div>
+ 
+    <script>
+        const quizData = [
+            {
+                question: "Quel est le rôle d'un routeur dans un réseau ?",
+                options: [
+                    "Connecter plusieurs machines au sein d'un même réseau",
+                    "Interconnecter des réseaux différents entre eux",
+                    "Attribuer automatiquement des adresses IP",
+                    "Amplifier le signal WiFi"
+                ],
+                correct: 1,
+                explanation: "Un routeur permet d'interconnecter des réseaux différents. Contrairement au switch qui relie des machines d'un même réseau, le routeur crée un pont entre plusieurs réseaux distincts."
+            },
+            {
+                question: "Combien d'interfaces réseau un routeur doit-il avoir au minimum pour être utile ?",
+                options: [
+                    "Une seule interface",
+                    "Deux interfaces minimum",
+                    "Trois interfaces minimum",
+                    "Quatre interfaces minimum"
+                ],
+                correct: 1,
+                explanation: "Un routeur doit avoir au minimum deux interfaces réseau. Avec une seule interface, il ne peut pas faire le pont entre deux réseaux différents et donc ne sert à rien."
+            },
+            {
+                question: "Un routeur est connecté au réseau 192.168.10.0/255.255.255.0 et au réseau 192.168.20.0/255.255.255.0. Quelles adresses IP peut-il avoir ?",
+                options: [
+                    "192.168.10.1 et 192.168.10.2",
+                    "192.168.10.1 et 192.168.20.1",
+                    "192.168.20.1 et 192.168.20.2",
+                    "192.168.10.0 et 192.168.20.0"
+                ],
+                correct: 1,
+                explanation: "Chaque interface du routeur doit avoir une adresse appartenant au réseau auquel elle est connectée. Avec le masque 255.255.255.0, 192.168.10.1 appartient au réseau 192.168.10.0 et 192.168.20.1 appartient au réseau 192.168.20.0. Les adresses en .0 sont des adresses réseau et ne peuvent pas être attribuées à une interface."
+            },
+            {
+                question: "Qu'est-ce qu'une passerelle réseau (gateway) ?",
+                options: [
+                    "Un serveur qui distribue les adresses IP",
+                    "L'adresse IP du routeur, représentant la porte de sortie du réseau",
+                    "Un câble spécial qui relie deux réseaux",
+                    "Un switch avec des fonctions avancées"
+                ],
+                correct: 1,
+                explanation: "La passerelle (gateway) est l'adresse IP du routeur dans le réseau local. Elle représente la porte de sortie : quand une machine veut communiquer avec un autre réseau, elle envoie ses paquets à cette adresse."
+            },
+            {
+                question: "Dans ipconfig, le paramètre 'Passerelle' affiche 192.168.0.1. Que représente cette adresse ?",
+                options: [
+                    "L'adresse du serveur DNS",
+                    "L'adresse de broadcast du réseau",
+                    "L'adresse IP du routeur dans ce réseau local",
+                    "L'adresse IP de la machine elle-même"
+                ],
+                correct: 2,
+                explanation: "La passerelle affichée dans ipconfig est l'adresse IP du routeur côté réseau local. C'est vers cette adresse que la machine envoie tous les paquets destinés à des réseaux extérieurs."
+            },
+            {
+                question: "À quoi sert une table de routage ?",
+                options: [
+                    "À stocker les adresses MAC des machines du réseau",
+                    "À indiquer au routeur vers quel nœud suivant envoyer un paquet selon l'adresse IP destination",
+                    "À attribuer automatiquement des adresses IP aux machines",
+                    "À filtrer les paquets malveillants"
+                ],
+                correct: 1,
+                explanation: "La table de routage permet à un routeur de décider vers quel nœud suivant transmettre un paquet en fonction de l'adresse IP du destinataire. C'est grâce à elle que les paquets trouvent leur chemin à travers le réseau."
+            },
+            {
+                question: "Dans le schéma du cours, le nœud F reçoit un paquet de A destiné à D. Sa table indique d'envoyer à E. Que fait ensuite E ?",
+                options: [
+                    "E envoie directement le paquet à D",
+                    "E renvoie le paquet à A",
+                    "E consulte sa propre table et transmet le paquet vers C, qui l'envoie à D",
+                    "E attend une confirmation de F avant d'agir"
+                ],
+                correct: 2,
+                explanation: "Chaque routeur consulte sa propre table de routage indépendamment. E reçoit le paquet, consulte sa table, et détermine qu'il doit l'envoyer à C. C fait de même et l'envoie finalement à D."
+            },
+            {
+                question: "Comment les routeurs obtiennent-ils les valeurs à placer dans leurs tables de routage ?",
+                options: [
+                    "Elles sont saisies manuellement par l'administrateur uniquement",
+                    "Elles sont calculées par un algorithme comme l'algorithme de Dijkstra",
+                    "Elles sont transmises par le serveur DNS",
+                    "Elles sont fixes et ne changent jamais"
+                ],
+                correct: 1,
+                explanation: "Quand les nœuds sont connectés, ils ne connaissent pas encore les chemins. Un algorithme de calcul de chemin — comme l'algorithme de Dijkstra — est utilisé pour remplir automatiquement les tables de routage."
+            },
+            {
+                question: "Quel est l'avantage principal d'un réseau maillé avec plusieurs routeurs ?",
+                options: [
+                    "Il est moins cher à mettre en place",
+                    "Il est plus rapide qu'un réseau avec un seul routeur",
+                    "Il supporte la perte d'un câble ou d'un nœud : les paquets trouvent un autre chemin",
+                    "Il ne nécessite pas de table de routage"
+                ],
+                correct: 2,
+                explanation: "La robustesse est l'avantage clé d'un réseau maillé : si un câble ou un routeur tombe en panne, les tables de routage se mettent à jour et les paquets empruntent un chemin alternatif."
+            },
+            {
+                question: "Pourquoi utilise-t-on des noms de domaine (comme google.com) plutôt que des adresses IP directement ?",
+                options: [
+                    "Parce que les adresses IP ne fonctionnent pas sur Internet",
+                    "Parce que les adresses IP sont numériques et difficiles à retenir, et peuvent changer si un service migre",
+                    "Parce que les noms de domaine sont plus rapides à router",
+                    "Parce que les adresses IP sont réservées aux routeurs"
+                ],
+                correct: 1,
+                explanation: "Deux raisons principales : les adresses IP sont difficiles à retenir pour les humains, et elles peuvent changer si un service migre vers un autre serveur. Les noms de domaine restent stables même si l'IP change."
+            },
+            {
+                question: "Que fait un serveur DNS quand il reçoit une requête pour un nom de domaine qu'il ne connaît pas ?",
+                options: [
+                    "Il retourne une erreur immédiatement",
+                    "Il ignore la requête",
+                    "Il retransmet la requête à un autre serveur DNS plus susceptible de connaître la réponse",
+                    "Il crée une nouvelle entrée avec une adresse IP aléatoire"
+                ],
+                correct: 2,
+                explanation: "Si un serveur DNS ne trouve pas le nom dans son registre, il retransmet la requête à un autre serveur DNS. Ce processus se répète jusqu'à ce qu'un serveur connaissant la réponse soit trouvé."
+            },
+            {
+                question: "Quelle est la différence entre Internet et le Web ?",
+                options: [
+                    "Ce sont deux noms pour la même chose",
+                    "Internet est le réseau physique de routeurs et câbles, le Web est l'ensemble des sites accessibles via HTTP",
+                    "Internet est sans fil, le Web est filaire",
+                    "Internet est gratuit, le Web est payant"
+                ],
+                correct: 1,
+                explanation: "Internet est l'infrastructure physique : routeurs reliés par des câbles (fibre), avec adresses IP et tables de routage. Le Web est une couche au-dessus : des sites avec adresses HTTP hébergés sur des serveurs. C'est le DNS qui fait le lien entre les deux."
+            },
+            {
+                question: "Que se passe-t-il quand on tape 'ping google.com' dans une console Windows ?",
+                options: [
+                    "Le navigateur s'ouvre sur google.com",
+                    "Le DNS résout d'abord le nom en adresse IP, puis des paquets sont envoyés vers cette IP",
+                    "Un email est envoyé aux serveurs de Google",
+                    "La machine se connecte directement à Google sans passer par un DNS"
+                ],
+                correct: 1,
+                explanation: "Le ping avec un nom de domaine déclenche d'abord une requête DNS pour obtenir l'adresse IP correspondante (ex: 172.217.168.14), puis envoie des paquets vers cette adresse IP pour tester la connectivité."
+            },
+            {
+                question: "Pour qu'une machine du réseau A puisse envoyer un paquet à une machine du réseau B via un routeur, que doit-on configurer sur chaque machine ?",
+                options: [
+                    "Rien, le routeur s'en charge automatiquement",
+                    "L'adresse IP du serveur DNS uniquement",
+                    "L'adresse IP du routeur comme passerelle (gateway)",
+                    "L'adresse MAC du routeur"
+                ],
+                correct: 2,
+                explanation: "Chaque machine doit avoir l'adresse IP du routeur configurée comme passerelle (gateway). Sans cette information, la machine ne sait pas à qui transmettre les paquets destinés à un autre réseau."
+            },
+            {
+                question: "Dans Filius, pourquoi est-il important de cocher 'Routage automatique' sur le routeur ?",
+                options: [
+                    "Pour que le routeur attribue des adresses IP automatiquement (DHCP)",
+                    "Pour que le routeur calcule et mette à jour automatiquement sa table de routage",
+                    "Pour activer le WiFi sur le routeur",
+                    "Pour que le routeur fonctionne comme un switch"
+                ],
+                correct: 1,
+                explanation: "Le routage automatique permet au routeur de calculer automatiquement sa table de routage en découvrant les réseaux voisins. Sans cette option, il faudrait remplir manuellement chaque entrée de la table."
+            }
+        ];
+ 
+        let score = 0;
+        let answeredQuestions = new Set();
+ 
+        function initQuiz() {
+            document.getElementById('totalQuestions').textContent = quizData.length;
+            document.getElementById('maxScore').textContent = quizData.length;
+            renderQuestions();
+            updateProgress();
+            createNetworkBackground();
+        }
+ 
+        function createNetworkBackground() {
+            const bg = document.getElementById('networkBg');
+            const nodeCount = 15;
+            const nodes = [];
+ 
+            for (let i = 0; i < nodeCount; i++) {
+                const node = document.createElement('div');
+                node.className = 'node';
+                node.style.left = Math.random() * 100 + '%';
+                node.style.top = Math.random() * 100 + '%';
+                node.style.animationDelay = Math.random() * 3 + 's';
+                bg.appendChild(node);
+                nodes.push({ x: parseFloat(node.style.left), y: parseFloat(node.style.top) });
+            }
+ 
+            for (let i = 0; i < nodeCount; i++) {
+                const randomConnections = Math.floor(Math.random() * 2) + 1;
+                for (let j = 0; j < randomConnections; j++) {
+                    const targetIndex = Math.floor(Math.random() * nodeCount);
+                    if (targetIndex !== i) {
+                        const connection = document.createElement('div');
+                        connection.className = 'connection';
+                        const x1 = nodes[i].x, y1 = nodes[i].y;
+                        const x2 = nodes[targetIndex].x, y2 = nodes[targetIndex].y;
+                        const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                        const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                        connection.style.width = length + 'vw';
+                        connection.style.left = x1 + '%';
+                        connection.style.top = y1 + '%';
+                        connection.style.transform = `rotate(${angle}deg)`;
+                        connection.style.animationDelay = Math.random() * 2 + 's';
+                        bg.appendChild(connection);
+                    }
+                }
+            }
+        }
+ 
+        function renderQuestions() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+ 
+            quizData.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.style.animationDelay = `${index * 0.1}s`;
+ 
+                card.innerHTML = `
+                    <div class="question-number">QUESTION ${index + 1}</div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="options">
+                        ${q.options.map((option, optIndex) => `
+                            <div class="option" data-question="${index}" data-option="${optIndex}">
+                                ${option}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback hidden" id="feedback-${index}"></div>
+                `;
+ 
+                container.appendChild(card);
+            });
+ 
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', handleOptionClick);
+            });
+        }
+ 
+        function handleOptionClick(e) {
+            const questionIndex = parseInt(e.target.dataset.question);
+            const optionIndex = parseInt(e.target.dataset.option);
+ 
+            if (answeredQuestions.has(questionIndex)) return;
+ 
+            const question = quizData[questionIndex];
+            const allOptions = document.querySelectorAll(`[data-question="${questionIndex}"]`);
+            const feedback = document.getElementById(`feedback-${questionIndex}`);
+ 
+            answeredQuestions.add(questionIndex);
+ 
+            allOptions.forEach(opt => {
+                opt.classList.add('disabled');
+                if (parseInt(opt.dataset.option) === question.correct) {
+                    opt.classList.add('correct');
+                }
+            });
+ 
+            const isCorrect = optionIndex === question.correct;
+ 
+            if (isCorrect) {
+                score++;
+                e.target.classList.add('correct');
+                feedback.className = 'feedback correct';
+                feedback.innerHTML = `✓ Correct ! ${question.explanation}`;
+            } else {
+                e.target.classList.add('incorrect');
+                feedback.className = 'feedback incorrect';
+                feedback.innerHTML = `✗ Incorrect. ${question.explanation}`;
+            }
+ 
+            feedback.classList.remove('hidden');
+            e.target.closest('.question-card').classList.add('answered');
+ 
+            updateProgress();
+ 
+            if (answeredQuestions.size === quizData.length) {
+                document.getElementById('submitBtn').classList.remove('hidden');
+            }
+        }
+ 
+        function updateProgress() {
+            const progress = (answeredQuestions.size / quizData.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('currentQuestion').textContent = answeredQuestions.size;
+            document.getElementById('currentScore').textContent = score;
+        }
+ 
+        function showResults() {
+            document.getElementById('quizContainer').classList.add('hidden');
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.querySelector('.progress-container').classList.add('hidden');
+ 
+            const results = document.getElementById('results');
+            const percentage = Math.round((score / quizData.length) * 100);
+ 
+            document.getElementById('finalScore').textContent = `${score} / ${quizData.length}`;
+ 
+            let message = '';
+            if (percentage === 100) {
+                message = '🎉 Parfait ! Vous maîtrisez les routeurs, le DNS et l\'interconnexion de réseaux !';
+            } else if (percentage >= 80) {
+                message = '🌟 Excellent ! Vous avez une très bonne compréhension du routage et du DNS.';
+            } else if (percentage >= 60) {
+                message = '👍 Bien joué ! Revoyez les concepts de passerelle et de table de routage.';
+            } else if (percentage >= 40) {
+                message = '📚 Pas mal, mais relisez le cours sur les routeurs et le protocole DNS.';
+            } else {
+                message = '💪 Continuez à étudier — revoyez les notions de routeur, passerelle et DNS !';
+            }
+ 
+            document.getElementById('performanceMessage').textContent = message;
+            results.classList.remove('hidden');
+        }
+ 
+        document.getElementById('submitBtn').addEventListener('click', showResults);
+ 
+        initQuiz();
+    </script>
+</body>
+</html>
